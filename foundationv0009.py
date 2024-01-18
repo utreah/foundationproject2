@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 import datetime
 # [DONE] Using food's name, match the name with FOOD_LIST-> get index of the food and use that index to get food's portion prices.
-# [WIP] creates multiple child_window(s) when button pressed more than once. Find a way to check whether a child window is open or not.
+# [DONE] creates multiple child_window(s) when button pressed more than once. Find a way to check whether a child window is open or not.
+# [DONE] ADD FOOD NAME TO RADIOBUTTON CHILD WINDOW -> Pleace choose a food portion: {FOOD NAME}
 
 
 FOOD_LIST = ["Lamb Kebab Wrap", "Lahmacun", "Cag Kebab", "Iskender", "Ezogelin", "Kisir", "Mercimek Kofte", "Sarma"]
@@ -23,37 +24,41 @@ def test_info():
         print("1")
         return True
     return False
-
+isChildWindowOpen = False
 def get_portion(food_name):
+    global isChildWindowOpen
+
     food_index = 0
     # Find Dish's INDEX in FOOD_LIST
     for food in FOOD_LIST:
         if food.lower() in food_name.lower():
             food_index = FOOD_LIST.index(food)
     # Create a top-level window (child windows)
-    global child_window
-    child_window = tk.Toplevel()
-    child_window.title("Portions")
+    if not isChildWindowOpen:
+        global child_window
+        child_window = tk.Toplevel()
+        child_window.title("Portions")
+        isChildWindowOpen = True
 
-    # Label
-    food_portion_label = tk.Label(child_window, text="Please choose a food portion")
-    food_portion_label.pack()
+        # Label
+        food_portion_label = tk.Label(child_window, text=f"Please choose a food portion \n{food_name}")
+        food_portion_label.pack()
 
-    # Define portions and stringVar
-    get_food_portion = tk.StringVar()
-    food_portions = (
-        ("Small", f"{FOOD_PRICE_LIST[food_index][0]}"), ("Large", f"{FOOD_PRICE_LIST[food_index][1]}") # WILL BE CHANGED WITH PORTION PRICE ARRAY
-    )
-    # Create Radiobutton
-    for portion in food_portions:
-        food_portion_radio = ttk.Radiobutton(child_window, text=portion[0], value=portion[1], variable=get_food_portion)
-        food_portion_radio.pack()
+        # Define portions and stringVar
+        get_food_portion = tk.StringVar()
+        food_portions = (
+            ("Small", f"{FOOD_PRICE_LIST[food_index][0]}"), ("Large", f"{FOOD_PRICE_LIST[food_index][1]}") # WILL BE CHANGED WITH PORTION PRICE ARRAY
+        )
+        # Create Radiobutton
+        for portion in food_portions:
+            food_portion_radio = ttk.Radiobutton(child_window, text=portion[0], value=portion[1], variable=get_food_portion)
+            food_portion_radio.pack()
 
 
-    get_portion_button = ttk.Button(child_window, text="Choose Portion", command=lambda : test(food_name, get_food_portion.get() ))
-    get_portion_button.pack()
+        get_portion_button = ttk.Button(child_window, text="Choose Portion", command=lambda : test(food_name, get_food_portion.get() ))
+        get_portion_button.pack()
 
-    child_window.mainloop()
+        child_window.mainloop()
 
 
 def print_items_in_food_menu():
