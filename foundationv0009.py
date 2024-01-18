@@ -5,11 +5,11 @@ import datetime
 # [BUG] creates multiple child_window(s) when button pressed more than once. Find a way to check whether a child window is open or not.
 
 
-FOOD_LIST = ["Lamb Kebab Wrap", "Lahmacun", "Cag Kebab", "Iskender", "Ezogelin"]
-FOOD_PRICE_LIST = [(10.99,  15.99), (3.99, 5.99), (18.99, 25.99), (16.99, 22.99), (7.99, 9.99)]
+FOOD_LIST = ["Lamb Kebab Wrap", "Lahmacun", "Cag Kebab", "Iskender", "Ezogelin", "Kisir", "Mercimek Kofte", "Sarma"]
+FOOD_PRICE_LIST = [(10.99,  15.99), (3.99, 5.99), (18.99, 25.99), (16.99, 22.99), (7.99, 9.99), (5.49, 6.85), (8.45, 9.99),(7.58, 9.45)]
 
 def test(args1, args2):
-    print("Args1:", args1, "\nArgs2:", args2)
+    print("Args1:", args1, "\nArgs2: £",args2)
     destroy_child_window()
 def destroy_child_window():
     child_window.destroy()
@@ -97,7 +97,7 @@ def print_items_in_food_menu():
     iskender_dish_information.place(x=925, y=200)
 
     # Create a button and add food_ezogelin.png
-    food_ezogelin_image = tk.PhotoImage(file="images/food/ezogelin.png")
+    food_ezogelin_image = tk.PhotoImage(file="images/food/food_ezogelin.png")
     ezogelin_button = tk.Button(food_frame, image=food_ezogelin_image, command=lambda: get_portion("Ezogelin"))
     ezogelin_button.image = food_ezogelin_image
     ezogelin_button.place(x=40, y=300,width=269)
@@ -105,6 +105,40 @@ def print_items_in_food_menu():
     # Create label for dish feature(s) -> Name, price, V/VE/GF
     ezogelin_dish_information = tk.Label(food_frame, text="Name: Ezogelin \nPrice(S/L): 7.99£/9.99£ \nV/VE")
     ezogelin_dish_information.place(x=110, y=500)
+
+    # Create a button and add food_kisir.png
+    food_kisir_image = tk.PhotoImage(file="images/food/food_kisir.png")
+    kisir_button = tk.Button(food_frame, image=food_kisir_image, command=lambda: get_portion("Kisir"))
+    kisir_button.image = food_kisir_image
+    kisir_button.place(x=330, y=300,width=253)
+
+    # Create label for dish feature(s) -> Name, price, V/VE/GF
+    kisir_dish_information = tk.Label(food_frame, text="Name: Kisir \nPrice(S/L): 5.49£/6.85£ \nV/VE")
+    kisir_dish_information.place(x=390, y=500)
+
+    # Create a button and add food_mercimekkofte.png
+    food_mercimekkofte_image = tk.PhotoImage(file="images/food/food_mercimekkofte.png")
+    mercimekkofte_button = tk.Button(food_frame, image=food_mercimekkofte_image, command=lambda: get_portion("Mercimek Kofte"))
+    mercimekkofte_button.image = food_mercimekkofte_image
+    mercimekkofte_button.place(x=600, y=300,width=253)
+
+    # Create label for dish feature(s) -> Name, price, V/VE/GF
+    mercimekkofte_dish_information = tk.Label(food_frame, text="Name: Mercimek Kofta \nPrice(S/L): 8.45£/9.99£ \nV/VE")
+    mercimekkofte_dish_information.place(x=660, y=500)
+
+    # Create a button and add food_mercimekkofte.png
+    food_sarma_image = tk.PhotoImage(file="images/food/food_sarma.png")
+    sarma_button = tk.Button(food_frame, image=food_sarma_image, command=lambda: get_portion("Mercimek Kofte"))
+    sarma_button.image = food_sarma_image
+    sarma_button.place(x=870, y=300,width=253)
+
+    # Create label for dish feature(s) -> Name, price, V/VE/GF
+    sarma_dish_information = tk.Label(food_frame, text="Name: Sarma \nPrice(S/L): 9.45£/13.99£ \nV/VE")
+    sarma_dish_information.place(x=935, y=500)
+
+
+
+
     go_back_to_main_menu()
 
 def time_on_screen():
