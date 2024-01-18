@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import datetime
 # [DONE] Using food's name, match the name with FOOD_LIST-> get index of the food and use that index to get food's portion prices.
-# [BUG] creates multiple child_window(s) when button pressed more than once. Find a way to check whether a child window is open or not.
+# [WIP] creates multiple child_window(s) when button pressed more than once. Find a way to check whether a child window is open or not.
 
 
 FOOD_LIST = ["Lamb Kebab Wrap", "Lahmacun", "Cag Kebab", "Iskender", "Ezogelin", "Kisir", "Mercimek Kofte", "Sarma"]
@@ -11,9 +11,19 @@ FOOD_PRICE_LIST = [(10.99,  15.99), (3.99, 5.99), (18.99, 25.99), (16.99, 22.99)
 def test(args1, args2):
     print("Args1:", args1, "\nArgs2: £",args2)
     destroy_child_window()
+
+
 def destroy_child_window():
     child_window.destroy()
     print("Child windows has been successfully destroyed")
+
+def test_info():
+#    child_window.protocol("WM_DELETE_WINDOW", )
+    if child_window.winfo_exists():
+        print("1")
+        return True
+    return False
+
 def get_portion(food_name):
     food_index = 0
     # Find Dish's INDEX in FOOD_LIST
@@ -40,8 +50,7 @@ def get_portion(food_name):
         food_portion_radio.pack()
 
 
- #  global get_portion_button
-    get_portion_button = ttk.Button(child_window, text="GET PORTION", command=lambda : test(food_name, get_food_portion.get() ))
+    get_portion_button = ttk.Button(child_window, text="Choose Portion", command=lambda : test(food_name, get_food_portion.get() ))
     get_portion_button.pack()
 
     child_window.mainloop()
