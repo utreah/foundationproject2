@@ -28,10 +28,9 @@ def append_to_basket(product_name, product_size ):
 
     destroy_child_window()
 
+
+
 isChildWindowOpen = False
-
-
-
 
 def get_portion(product_name):
     global isChildWindowOpen
@@ -260,8 +259,8 @@ main_pos_name.geometry(f"{get_screen_res_width}x{get_screen_res_height-72}+{set_
 
 
 main_menu()
-test_button = tk.Button(main_pos_name, text="Test Button", command=customer_basket_treeview)
-test_button.place(x=600,y=800)
+#test_button = tk.Button(main_pos_name, text="Test Button", command=customer_basket_treeview)
+#test_button.place(x=600,y=800)
 
 
 
