@@ -9,11 +9,16 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [BUG/FIXED] ValueError: 'LAMB KEBAB WRAP' is not in list// check append_to_basket function
 # [BUG/FIXED] If customer dont choose a size, it automatically adds LARGE portion name and price but not product size.
 # [BUG] Large portions are being added to CUSTOMER_BASKET capitalized. Not important but can be fixed to improve eye appeal.
+# [BUG/FIXED] Portion window not opening after closing. You have to restart the whole application in order to make it work.
+# [DONE] Now it calculates the price based on quantity.
+
+
 FOOD_LIST = ["Lamb Kebab Wrap", "Lahmacun", "Cag Kebab", "Iskender", "Ezogelin", "Kisir", "Mercimek Kofte", "Sarma"]
 PRICE_LIST = [(10.99,  15.99), (3.99, 5.99), (18.99, 25.99), (16.99, 22.99), (7.99, 9.99), (5.49, 6.85), (8.45, 9.99),(7.58, 9.45)]
 CUSTOMER_BASKET = []
 CUSTOMER_BASKET_PRICE = []
 CUSTOMER_BASKET_PRODUCT_SIZE = []
+isChildWindowOpen = False
 treeview_tuple = []
 treeview_seen = set()
 def append_to_basket(product_name, product_size ):
@@ -34,9 +39,11 @@ def append_to_basket(product_name, product_size ):
     print(f"{CUSTOMER_BASKET}, {CUSTOMER_BASKET_PRICE}, {CUSTOMER_BASKET_PRODUCT_SIZE}")
     destroy_child_window()
 
+def child_window_on_close(child_window):
+    global isChildWindowOpen
+    isChildWindowOpen = False
+    child_window.destroy()
 
-
-isChildWindowOpen = False
 
 def get_portion(product_name):
     global isChildWindowOpen
@@ -47,7 +54,7 @@ def get_portion(product_name):
         child_window = tk.Toplevel()
         child_window.title("Portions")
         isChildWindowOpen = True
-
+        child_window.resizable(False, False)
         # Label
         food_portion_label = tk.Label(child_window, text=f"Please choose a food portion \n{product_name}")
         food_portion_label.pack()
@@ -55,7 +62,7 @@ def get_portion(product_name):
         # Define portions and stringVar
         get_food_portion = tk.StringVar(None, "S")
         food_portions = (
-            ("Small", "S"), ("Large", "L") # WILL BE CHANGED WITH PORTION PRICE ARRAY [DONE]
+            ("Small", "S"), ("Large", "L")
         )
         # Create Radiobutton
         for portion in food_portions:
@@ -64,6 +71,7 @@ def get_portion(product_name):
 
         get_portion_button = ttk.Button(child_window, text="Choose Portion", command=lambda : append_to_basket(product_name, get_food_portion.get() ))
         get_portion_button.pack()
+        child_window.protocol('WM_DELETE_WINDOW',lambda: child_window_on_close(child_window))
         child_window.mainloop()
 
 
@@ -80,10 +88,13 @@ def treeview_print_to_screen():
     clear_treeview_all()
     # Create a tuple, count how many, add if a product in list multiple amount to seen list and append product information
     for product_name_treeview, loop_counter in zip(CUSTOMER_BASKET, range(0, len(CUSTOMER_BASKET))):
+#        if CUSTOMER_BASKET[loop_counter].lower() in FOOD_LIST[loop_counter].lower():
+#            product_test = loop_counter
+#            print(f"Treeview food list test: {product_test}", CUSTOMER_BASKET[loop_counter])
         if product_name_treeview not in treeview_seen:
             get_product_price = find_product_price(product_name_treeview,CUSTOMER_BASKET_PRODUCT_SIZE[loop_counter])
             count = CUSTOMER_BASKET.count(product_name_treeview)
-            treeview_tuple.append((CUSTOMER_BASKET[loop_counter], CUSTOMER_BASKET_PRODUCT_SIZE[loop_counter], count, f'{get_product_price}£'))
+            treeview_tuple.append((CUSTOMER_BASKET[loop_counter], CUSTOMER_BASKET_PRODUCT_SIZE[loop_counter], count, f'{get_product_price*count}£'))
             treeview_seen.add(product_name_treeview)
     for test in treeview_tuple:
         customer_basket_treeview.insert('', tk.END, values=test)
