@@ -3,29 +3,35 @@ from tkinter import ttk
 import datetime
 from tkinter.messagebox import showerror, showwarning, showinfo
 # [DONE] Using food's name, match the name with FOOD_LIST-> get index of the food and use that index to get food's portion prices.
-# [DONE] creates multiple child_window(s) when button pressed more than once. Find a way to check whether a child window is open or not.
+# [BUG/FIXED] creates multiple child_window(s) when button pressed more than once. Find a way to check whether a child window is open or not.
 # [DONE] ADD FOOD NAME TO RADIOBUTTON CHILD WINDOW -> Pleace choose a food portion: {FOOD NAME}
-
+# [BUG/FIXED] When you insert same food it doesnt increase the quantity but makes a new entry and increases the quantity by 1
+# [BUG/FIXED] ValueError: 'LAMB KEBAB WRAP' is not in list// check append_to_basket function
+# [BUG/FIXED] If customer dont choose a size, it automatically adds LARGE portion name and price but not product size.
+# [BUG] Large portions are being added to CUSTOMER_BASKET capitalized. Not important but can be fixed to improve eye appeal.
 FOOD_LIST = ["Lamb Kebab Wrap", "Lahmacun", "Cag Kebab", "Iskender", "Ezogelin", "Kisir", "Mercimek Kofte", "Sarma"]
 PRICE_LIST = [(10.99,  15.99), (3.99, 5.99), (18.99, 25.99), (16.99, 22.99), (7.99, 9.99), (5.49, 6.85), (8.45, 9.99),(7.58, 9.45)]
 CUSTOMER_BASKET = []
 CUSTOMER_BASKET_PRICE = []
 CUSTOMER_BASKET_PRODUCT_SIZE = []
 treeview_tuple = []
+treeview_seen = set()
 def append_to_basket(product_name, product_size ):
     food_index = 0
     # Find Dish's INDEX in FOOD_LIST
     for food in FOOD_LIST:
-        if food.lower() in product_name.lower():
+        if food in product_name:
             food_index = FOOD_LIST.index(food)
     if product_size == 'S':
+        CUSTOMER_BASKET.append(product_name)
         CUSTOMER_BASKET_PRICE.append(PRICE_LIST[food_index][0])
     else:
+        product_name_capitalized = product_name.upper()
+        CUSTOMER_BASKET.append(product_name_capitalized)
         CUSTOMER_BASKET_PRICE.append(PRICE_LIST[food_index][1])
-    CUSTOMER_BASKET.append(product_name)
     CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
     showinfo(title="Choice", message=f"'{product_name}' has been added to your basket")
-
+    print(f"{CUSTOMER_BASKET}, {CUSTOMER_BASKET_PRICE}, {CUSTOMER_BASKET_PRODUCT_SIZE}")
     destroy_child_window()
 
 
@@ -47,7 +53,7 @@ def get_portion(product_name):
         food_portion_label.pack()
 
         # Define portions and stringVar
-        get_food_portion = tk.StringVar()
+        get_food_portion = tk.StringVar(None, "S")
         food_portions = (
             ("Small", "S"), ("Large", "L") # WILL BE CHANGED WITH PORTION PRICE ARRAY [DONE]
         )
@@ -60,27 +66,56 @@ def get_portion(product_name):
         get_portion_button.pack()
         child_window.mainloop()
 
-def customer_basket_treeview():
+
+def clear_treeview_all():
+    # Clear treeview_tuple and treeview_seen to reset treeview. So we won't append the same product multiple times to screen.
+    treeview_tuple.clear()
+    treeview_seen.clear()
+    # Clear childrens of treeview.
+    for item in customer_basket_treeview.get_children():
+        customer_basket_treeview.delete(item)
+
+def treeview_print_to_screen():
+    print(f"Treeview : {CUSTOMER_BASKET}, {CUSTOMER_BASKET_PRICE}, {CUSTOMER_BASKET_PRODUCT_SIZE}")
+    clear_treeview_all()
+    # Create a tuple, count how many, add if a product in list multiple amount to seen list and append product information
+    for product_name_treeview, loop_counter in zip(CUSTOMER_BASKET, range(0, len(CUSTOMER_BASKET))):
+        if product_name_treeview not in treeview_seen:
+            get_product_price = find_product_price(product_name_treeview,CUSTOMER_BASKET_PRODUCT_SIZE[loop_counter])
+            count = CUSTOMER_BASKET.count(product_name_treeview)
+            treeview_tuple.append((CUSTOMER_BASKET[loop_counter], CUSTOMER_BASKET_PRODUCT_SIZE[loop_counter], count, f'{get_product_price}£'))
+            treeview_seen.add(product_name_treeview)
+    for test in treeview_tuple:
+        customer_basket_treeview.insert('', tk.END, values=test)
+def customer_basket_treeview_insert():
     # Define treeview identifiers
-    treeview_customer_basket_identifier_columns = ('product_name', 'product_quantity', 'product_size', 'product_price')
+    treeview_customer_basket_identifier_columns = ('product_name', 'product_size', 'product_quantity', 'product_price')
     # Create a treeview
+    global customer_basket_treeview
     customer_basket_treeview = ttk.Treeview(button_section_frame, columns=treeview_customer_basket_identifier_columns, show='headings')
     # Create headings and place treeview onto frame 'button_section_frame'
     customer_basket_treeview.heading('product_name', text='Product Name')
-    customer_basket_treeview.heading('product_quantity', text='Product Quantity')
     customer_basket_treeview.heading('product_size', text='Product Size')
+    customer_basket_treeview.heading('product_quantity', text='Product Quantity')
     customer_basket_treeview.heading('product_price', text='Product Price')
-    customer_basket_treeview.place(x=840, y=40, height=800),
-    # Create a tuple and append product information
-#    treeview_tuple.append((f'{product_name}', f'{product_quantity}', f'{product_size}', f'{product_price}'))
-    for appendToTreeview in treeview_tuple:
-        customer_basket_treeview.insert('', tk.END, values=appendToTreeview)
+    customer_basket_treeview.place(x=840, y=40, height=800)
+    treeview_print_to_screen()
+
+
+def find_product_price(product_name, product_size):
+    get_product_index = 0
+    for i in range(0,len(FOOD_LIST)):
+        if product_name.lower() in FOOD_LIST[i].lower():
+            get_product_index = i
+
+    if product_size == 'S':
+        return PRICE_LIST[get_product_index][0]
+    return PRICE_LIST[get_product_index][1]
 
 
 def main_menu():
     clear_screen()
     time_on_screen()
-
     # Create a BUTTON SECTION frame
     global button_section_frame
     button_section_frame = tk.Frame(main_pos_name)
@@ -108,7 +143,8 @@ def main_menu():
     # COFFEE BUTTON
     coffee_button = tk.Button(button_section_frame, text="COFFEE", bg="BLACK", font=('bold'), fg="WHITE")
     coffee_button.place(x=550, y=300, width=200, height=200)
-    customer_basket_treeview()
+#  update_button = tk.Button(button_section_frame, text="UPDATE", command=treeview_print_to_screen).pack()
+    customer_basket_treeview_insert()
 
 
 def go_back_to_main_menu():
