@@ -535,6 +535,187 @@ def print_items_in_mocktail_menu():
 
     go_back_to_main_menu()
 
+
+def print_items_in_kids_menu():
+    # width = 245px,  height=186px for future references
+
+    clear_screen()
+    time_on_screen()
+    # Create a frame
+    kids_menu_frame = tk.Frame(main_pos_name)
+    kids_menu_frame.pack(fill=tk.BOTH, expand=True)
+
+    # Create a button and add kids_nuggets.png
+    kids_nuggets_image = tk.PhotoImage(file="images/kids_menu/kids_nuggets.png").subsample(x=4, y=4)
+    nuggets_button = tk.Button(kids_menu_frame, image=kids_nuggets_image)
+    nuggets_button.image = kids_nuggets_image
+    nuggets_button.place(x=40, y=5, width=200, height=200)
+
+    # Label for Chicken Nuggets
+    nuggets_label = tk.Label(kids_menu_frame, text="Chicken Nuggets\nPrice: 4.99£")
+    nuggets_label.place(x=75, y=210)
+
+    # Create a button and add kids_salmon.png
+    kids_salmon_image = tk.PhotoImage(file="images/kids_menu/kids_salmon.png").subsample(x=4, y=4)
+    salmon_button = tk.Button(kids_menu_frame, image=kids_salmon_image)
+    salmon_button.image = kids_salmon_image
+    salmon_button.place(x=315, y=5, width=200, height=200)
+
+    # Label for Easy Salmon Curry
+    salmon_label = tk.Label(kids_menu_frame, text="Easy Salmon Curry\nPrice: 5.99£")
+    salmon_label.place(x=350, y=210)
+
+    # Create a button and add kids_potatoes.png
+    kids_potatoes_image = tk.PhotoImage(file="images/kids_menu/kids_potatoes.png").subsample(x=4, y=4)
+    potatoes_button = tk.Button(kids_menu_frame, image=kids_potatoes_image)
+    potatoes_button.image = kids_potatoes_image
+    potatoes_button.place(x=610, y=5, width=200, height=200)
+
+    # Label for Air-fryer Jacket Potatoes
+    potatoes_label = tk.Label(kids_menu_frame, text="Air-fryer Jacket Potatoes\nPrice: 3.99£")
+    potatoes_label.place(x=645, y=210)
+
+    # Create a button and add kids_pasta.png
+    kids_pasta_image = tk.PhotoImage(file="images/kids_menu/kids_pasta.png").subsample(x=4, y=4)
+    pasta_button = tk.Button(kids_menu_frame, image=kids_pasta_image)
+    pasta_button.image = kids_pasta_image
+    pasta_button.place(x=895, y=5, width=200, height=200)
+
+    # Label for Chicken Pasta Bake
+    pasta_label = tk.Label(kids_menu_frame, text="Chicken Pasta Bake\nPrice: 5.49£")
+    pasta_label.place(x=930, y=210)
+
+    # Create a button and add kids_finger.png
+    kids_finger_image = tk.PhotoImage(file="images/kids_menu/kids_finger.png").subsample(x=4, y=4)
+    finger_button = tk.Button(kids_menu_frame, image=kids_finger_image)
+    finger_button.image = kids_finger_image
+    finger_button.place(x=40, y=300, width=200, height=200)
+
+    # Label for Homemade Fish Fingers
+    finger_label = tk.Label(kids_menu_frame, text="Homemade Fish Fingers\nPrice: 4.99£")
+    finger_label.place(x=75, y=505)
+
+    # Create a button and add kids_chickenstew.png
+    kids_chickenstew_image = tk.PhotoImage(file="images/kids_menu/kids_chickenstew.png").subsample(x=4, y=4)
+    chickenstew_button = tk.Button(kids_menu_frame, image=kids_chickenstew_image)
+    chickenstew_button.image = kids_chickenstew_image
+    chickenstew_button.place(x=315, y=300, width=200, height=200)
+
+    # Label for Creamy Chicken Stew
+    chickenstew_label = tk.Label(kids_menu_frame, text="Creamy Chicken Stew\nPrice: 6.49£")
+    chickenstew_label.place(x=350, y=505)
+
+    # Create a button and add kids_burger.png
+    kids_burger_image = tk.PhotoImage(file="images/kids_menu/kids_burger.png").subsample(x=4, y=4)
+    burger_button = tk.Button(kids_menu_frame, image=kids_burger_image)
+    burger_button.image = kids_burger_image
+    burger_button.place(x=610, y=300, width=200, height=200)
+
+    # Label for Swedish Meatball Burgers
+    burger_label = tk.Label(kids_menu_frame, text="Swedish Meatball Burgers\nPrice: 5.99£")
+    burger_label.place(x=645, y=505)
+
+    # Create a button and add kids_burger.png
+    kids_beefstew_image = tk.PhotoImage(file="images/kids_menu/kids_beefstew.png").subsample(x=4, y=4)
+    beefstew_button = tk.Button(kids_menu_frame, image=kids_beefstew_image)
+    beefstew_button.image = kids_beefstew_image
+    beefstew_button.place(x=895, y=300, width=200, height=200)
+
+    # Label for Swedish Meatball Burgers
+    beefstew_label = tk.Label(kids_menu_frame, text="Healthy beef stew with veggie mash \nPrice: 5.99£")
+    beefstew_label.place(x=900, y=505)
+
+    go_back_to_main_menu()
+
+def print_items_in_coffee_menu():
+    # width = 245px,  height=186px for future references
+
+    clear_screen()
+    time_on_screen()
+    # Create a frame
+    coffee_menu_frame = tk.Frame(main_pos_name)
+    coffee_menu_frame.pack(fill=tk.BOTH, expand=True)
+
+    # Create a button and add coffee_latte.png
+    coffee_latte_image = tk.PhotoImage(file="images/coffee_menu/coffee_latte.png").subsample(x=4, y=4)
+    latte_button = tk.Button(coffee_menu_frame, image=coffee_latte_image)
+    latte_button.image = coffee_latte_image
+    latte_button.place(x=40, y=5, width=200, height=200)
+
+    # Label for Latte
+    latte_label = tk.Label(coffee_menu_frame, text="Latte\nPrice: 3.99£")
+    latte_label.place(x=105, y=210)
+
+    # Create a button and add coffee_cortado.png
+    coffee_cortado_image = tk.PhotoImage(file="images/coffee_menu/coffee_cortado.png").subsample(x=4, y=4)
+    cortado_button = tk.Button(coffee_menu_frame, image=coffee_cortado_image)
+    cortado_button.image = coffee_cortado_image
+    cortado_button.place(x=315, y=5, width=200, height=200)
+
+    # Label for Cortado
+    cortado_label = tk.Label(coffee_menu_frame, text="Cortado\nPrice: 2.99£")
+    cortado_label.place(x=385, y=210)
+
+    # Create a button and add coffee_espresso.png
+    coffee_espresso_image = tk.PhotoImage(file="images/coffee_menu/coffee_espresso.png").subsample(x=4, y=4)
+    espresso_button = tk.Button(coffee_menu_frame, image=coffee_espresso_image)
+    espresso_button.image = coffee_espresso_image
+    espresso_button.place(x=610, y=5, width=200, height=200)
+
+    # Label for Espresso
+    espresso_label = tk.Label(coffee_menu_frame, text="Espresso\nPrice: 1.99£")
+    espresso_label.place(x=675, y=210)
+
+    # Create a button and add coffee_flatblack.png
+    coffee_flatblack_image = tk.PhotoImage(file="images/coffee_menu/coffee_flatblack.png").subsample(x=4, y=4)
+    flatblack_button = tk.Button(coffee_menu_frame, image=coffee_flatblack_image)
+    flatblack_button.image = coffee_flatblack_image
+    flatblack_button.place(x=895, y=5, width=200, height=200)
+
+    # Label for Flat Black
+    flatblack_label = tk.Label(coffee_menu_frame, text="Flat Black\nPrice: 2.49£")
+    flatblack_label.place(x=959, y=210)
+
+    # Create a button and add coffee_flatwhite.png (second time if needed)
+    coffee_flatwhite_image = tk.PhotoImage(file="images/coffee_menu/coffee_flatwhite.png").subsample(x=4, y=4)
+    flatwhite_button = tk.Button(coffee_menu_frame, image=coffee_flatwhite_image)
+    flatwhite_button.image = coffee_flatwhite_image
+    flatwhite_button.place(x=40, y=300, width=200, height=200)
+
+    # Label for Flat White
+    flatwhite_label = tk.Label(coffee_menu_frame, text="Flat White\nPrice: 3.49£")
+    flatwhite_label.place(x=105, y=505)
+
+    # Create a button and add coffee_mocha.png
+    coffee_mocha_image = tk.PhotoImage(file="images/coffee_menu/coffee_mocha.png").subsample(x=4, y=4)
+    mocha_button = tk.Button(coffee_menu_frame, image=coffee_mocha_image)
+    mocha_button.image = coffee_mocha_image
+    mocha_button.place(x=315, y=300, width=200, height=200)
+
+    # Label for Mocha
+    mocha_label = tk.Label(coffee_menu_frame, text="Mocha\nPrice: 3.99£")
+    mocha_label.place(x=380, y=505)
+
+    # Create a button and add coffee_americano.png
+    coffee_americano_image = tk.PhotoImage(file="images/coffee_menu/coffee_americano.png").subsample(x=4, y=4)
+    americano_button = tk.Button(coffee_menu_frame, image=coffee_americano_image)
+    americano_button.image = coffee_americano_image
+    americano_button.place(x=610, y=300, width=200, height=200)
+
+    # Label for Americano
+    americano_label = tk.Label(coffee_menu_frame, text="Americano\nPrice: 2.99£")
+    americano_label.place(x=680, y=505)
+
+    coffee_cappucino_image = tk.PhotoImage(file="images/coffee_menu/coffee_cappucino.png").subsample(x=4, y=4)
+    # Create a button and add coffee_americano.png
+    cappucino_button = tk.Button(coffee_menu_frame, image=coffee_cappucino_image)
+    cappucino_button.image = coffee_cappucino_image
+    cappucino_button.place(x=895, y=300, width=200, height=200)
+
+    # Label for Americano
+    americano_label = tk.Label(coffee_menu_frame, text="Cappucino\nPrice: 2.99£")
+    americano_label.place(x=960, y=505)
+    go_back_to_main_menu()
 def main_menu():
     clear_screen()
     time_on_screen()
@@ -562,7 +743,7 @@ def main_menu():
 
     # KIDS BUTTON
     kids_menu_button_image = tk.PhotoImage(file="images/other/kidsmenu_button.png").subsample(x=2, y=2)
-    kids_menu_button = tk.Button(button_section_frame, image=kids_menu_button_image, fg="WHITE")
+    kids_menu_button = tk.Button(button_section_frame, image=kids_menu_button_image, command = print_items_in_kids_menu)
     kids_menu_button.image = kids_menu_button_image
     kids_menu_button.place(x=50, y=300, width=200, height=200)
 
@@ -574,7 +755,7 @@ def main_menu():
 
     # COFFEE BUTTON
     coffee_button_image = tk.PhotoImage(file="images/other/coffee_button.png").subsample(x=4, y=4)
-    coffee_button = tk.Button(button_section_frame, image=coffee_button_image, fg="WHITE")
+    coffee_button = tk.Button(button_section_frame, image=coffee_button_image, command=print_items_in_coffee_menu)
     coffee_button.image = coffee_button_image
     coffee_button.place(x=550, y=300, width=200, height=200)
 #  update_button = tk.Button(button_section_frame, text="UPDATE", command=treeview_print_to_screen).pack()
