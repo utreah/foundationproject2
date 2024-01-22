@@ -1,6 +1,6 @@
-# Foundation Project 2.0.2
+# Foundation Project 0.2.0.2
 
-**Foundation Project**, Version 2.0.2. Here's what's new:
+**Foundation Project**, Version 0.2.0.2. Here's what's new:
 
 ## Updates
 
