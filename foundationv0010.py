@@ -12,16 +12,18 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [BUG/FIXED] Portion window not opening after closing. You have to restart the whole application in order to make it work.
 # [DONE] Now it calculates the price based on quantity.
 # [WIP] Remove 'Name:' from product information
-
+# [WIP] negroni, old fashioned, whiskey sour
 PRODUCT_LIST = ["Lamb Kebab Wrap", "Lahmacun", "Cag Kebab", "Iskender", "Ezogelin", "Kisir", "Mercimek Kofte", "Sarma"]
-PRICE_LIST = [(10.99,  15.99), (3.99, 5.99), (18.99, 25.99), (16.99, 22.99), (7.99, 9.99), (5.49, 6.85), (8.45, 9.99),(7.58, 9.45)]
+PRICE_LIST = [(10.99,  15.99), (3.99, 5.99), (18.99, 25.99), (16.99, 22.99), (7.99, 9.99), (5.49, 6.85), (8.45, 9.99), (7.58, 9.45)]
 CUSTOMER_BASKET = []
 CUSTOMER_BASKET_PRICE = []
 CUSTOMER_BASKET_PRODUCT_SIZE = []
 isChildWindowOpen = False
 treeview_tuple = []
 treeview_seen = set()
-def append_to_basket(product_name, product_size ):
+
+
+def append_to_basket(product_name, product_size):
     food_index = 0
     # Find Dish's INDEX in PRODUCT_LIST
     for food in PRODUCT_LIST:
@@ -38,7 +40,8 @@ def append_to_basket(product_name, product_size ):
     showinfo(title="Choice", message=f"'{product_name}' has been added to your basket")
     destroy_child_window()
 
-def on_close_child_window(child_window):
+
+def on_close_child_window():
     global isChildWindowOpen
     isChildWindowOpen = False
     child_window.destroy()
@@ -68,9 +71,9 @@ def get_portion(product_name):
             food_portion_radio = ttk.Radiobutton(child_window, text=portion[0], value=portion[1], variable=get_food_portion)
             food_portion_radio.pack()
 
-        get_portion_button = ttk.Button(child_window, text="Choose Portion", command=lambda : append_to_basket(product_name, get_food_portion.get()))
+        get_portion_button = ttk.Button(child_window, text="Choose Portion", command=lambda: append_to_basket(product_name, get_food_portion.get()))
         get_portion_button.pack()
-        child_window.protocol('WM_DELETE_WINDOW',lambda: on_close_child_window(child_window))
+        child_window.protocol('WM_DELETE_WINDOW', lambda: on_close_child_window(child_window))
         child_window.mainloop()
 
 
@@ -82,21 +85,21 @@ def clear_treeview_all():
     for item in customer_basket_treeview.get_children():
         customer_basket_treeview.delete(item)
 
+
 def treeview_print_to_screen():
     print(f"Treeview : {CUSTOMER_BASKET}, {CUSTOMER_BASKET_PRICE}, {CUSTOMER_BASKET_PRODUCT_SIZE}")
     clear_treeview_all()
     # Create a tuple, count how many, add if a product in list multiple amount to seen list and append product information
     for product_name_treeview, loop_counter in zip(CUSTOMER_BASKET, range(0, len(CUSTOMER_BASKET))):
-#        if CUSTOMER_BASKET[loop_counter].lower() in PRODUCT_LIST[loop_counter].lower():
-#            product_test = loop_counter
-#            print(f"Treeview food list test: {product_test}", CUSTOMER_BASKET[loop_counter])
         if product_name_treeview not in treeview_seen:
-            get_product_price = find_product_price(product_name_treeview,CUSTOMER_BASKET_PRODUCT_SIZE[loop_counter])
+            get_product_price = find_product_price(product_name_treeview, CUSTOMER_BASKET_PRODUCT_SIZE[loop_counter])
             count = CUSTOMER_BASKET.count(product_name_treeview)
             treeview_tuple.append((CUSTOMER_BASKET[loop_counter], CUSTOMER_BASKET_PRODUCT_SIZE[loop_counter], count, f'{round(get_product_price*count,2)}£'))
             treeview_seen.add(product_name_treeview)
     for add_to_treview in treeview_tuple:
         customer_basket_treeview.insert('', tk.END, values=add_to_treview)
+
+        
 def treeview_create_customer_basket():
     # Define treeview identifiers
     treeview_customer_basket_identifier_columns = ('product_name', 'product_size', 'product_quantity', 'product_price')
