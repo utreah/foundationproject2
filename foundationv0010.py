@@ -11,7 +11,7 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [BUG] Large portions are being added to CUSTOMER_BASKET capitalized. Not important but can be fixed to improve eye appeal.
 # [BUG/FIXED] Portion window not opening after closing. You have to restart the whole application in order to make it work.
 # [DONE] Now it calculates the price based on quantity.
-
+# [WIP] Remove 'Name:' from product information
 
 PRODUCT_LIST = ["Lamb Kebab Wrap", "Lahmacun", "Cag Kebab", "Iskender", "Ezogelin", "Kisir", "Mercimek Kofte", "Sarma"]
 PRICE_LIST = [(10.99,  15.99), (3.99, 5.99), (18.99, 25.99), (16.99, 22.99), (7.99, 9.99), (5.49, 6.85), (8.45, 9.99),(7.58, 9.45)]
@@ -348,6 +348,190 @@ def print_items_in_drink_menu():
     go_back_to_main_menu()
 
 
+def print_items_in_cocktail_menu():
+    # width = 245px,  height=186px for future references
+
+    clear_screen()
+    time_on_screen()
+    # Create a frame
+    cocktail_frame = tk.Frame(main_pos_name)
+    cocktail_frame.pack(fill=tk.BOTH, expand=True)
+
+    # Create a button and add cocktail_cosmopolitan.png
+    cosmopolitan_image = tk.PhotoImage(file="images/cocktails/cocktail_cosmopolitan.png").subsample(x=4,y=4)
+    cosmopolitan_button = tk.Button(cocktail_frame, image=cosmopolitan_image)
+    cosmopolitan_button.image = cosmopolitan_image
+    cosmopolitan_button.place(x=40, y=5, width=200, height=200)
+
+    # Create label for cocktail feature(s) -> Name, price
+    cosmopolitan_information = tk.Label(cocktail_frame, text="Name: Cosmopolitan \nPrice: 8.99£")
+    cosmopolitan_information.place(x=75, y=210)
+
+    # Create a button and add cocktail_margarita.png
+    margarita_image = tk.PhotoImage(file="images/cocktails/cocktail_margarita.png").subsample(x=4,y=4)
+    margarita_button = tk.Button(cocktail_frame, image=margarita_image)
+    margarita_button.image = margarita_image
+    margarita_button.place(x=315, y=5, width=200, height=200)
+
+    # Create label for cocktail feature(s) -> Name, price
+    margarita_information = tk.Label(cocktail_frame, text="Name: Margarita \nPrice: 9.99£")
+    margarita_information.place(x=375, y=210)
+
+    # Create a button and add cocktail_martini.png
+    martini_image = tk.PhotoImage(file="images/cocktails/cocktail_martini.png").subsample(x=4,y=4)
+    martini_button = tk.Button(cocktail_frame, image=martini_image)
+    martini_button.image = martini_image
+    martini_button.place(x=610, y=5, width=200, height=200)
+
+    # Create label for cocktail feature(s) -> Name, price
+    martini_information = tk.Label(cocktail_frame, text="Name: Martini \nPrice: 10.99£")
+    martini_information.place(x=670, y=210)
+
+    # Create a button and add cocktail_mojito.png
+    mojito_image = tk.PhotoImage(file="images/cocktails/cocktail_mojito.png").subsample(x=4,y=4)
+    mojito_button = tk.Button(cocktail_frame, image=mojito_image)
+    mojito_button.image = mojito_image
+    mojito_button.place(x=895, y=5, width=200, height=200)
+
+    # Create label for cocktail feature(s) -> Name, price
+    mojito_information = tk.Label(cocktail_frame, text="Name: Mojito \nPrice: 7.99£")
+    mojito_information.place(x=960, y=210)
+
+    # Create a button and add cocktail_moscowmule.png
+    moscowmule_image = tk.PhotoImage(file="images/cocktails/cocktail_moscowmule.png").subsample(x=4,y=4)
+    moscowmule_button = tk.Button(cocktail_frame, image=moscowmule_image)
+    moscowmule_button.image = moscowmule_image
+    moscowmule_button.place(x=40, y=300, width=200, height=200)
+
+    # Create label for cocktail feature(s) -> Name, price
+    moscowmule_information = tk.Label(cocktail_frame, text="Name: Moscow Mule \nPrice: 8.45£")
+    moscowmule_information.place(x=80, y=505)
+
+    # Create a button and add cocktail_negroni.png
+    negroni_image = tk.PhotoImage(file="images/cocktails/cocktail_negroni.png").subsample(x=4,y=4)
+    negroni_button = tk.Button(cocktail_frame, image=negroni_image, command=lambda: get_portion("Negroni"))
+    negroni_button.image = negroni_image
+    negroni_button.place(x=315, y=300, width=200, height=200)
+
+    # Create label for cocktail feature(s) -> Name, price
+    negroni_information = tk.Label(cocktail_frame, text="Name: Negroni \nPrice: 9.50£")
+    negroni_information.place(x=370, y=505)
+
+    # Create a button and add cocktail_oldfashioned.png
+    oldfashioned_image = tk.PhotoImage(file="images/cocktails/cocktail_oldfashioned.png").subsample(x=4,y=4)
+    oldfashioned_button = tk.Button(cocktail_frame, image=oldfashioned_image, command=lambda: get_portion("Old Fashioned"))
+    oldfashioned_button.image = oldfashioned_image
+    oldfashioned_button.place(x=610, y=300, width=200, height=200)
+
+    # Create label for cocktail feature(s) -> Name, price
+    oldfashioned_information = tk.Label(cocktail_frame, text="Name: Old Fashioned \nPrice: 10.50£")
+    oldfashioned_information.place(x=655, y=505)
+
+    # Create a button and add cocktail_whiskeysour.png
+    whiskeysour_image = tk.PhotoImage(file="images/cocktails/cocktail_whiskeysour.png").subsample(x=4,y=4)
+    whiskeysour_button = tk.Button(cocktail_frame, image=whiskeysour_image, command=lambda: get_portion("Whiskey Sour"))
+    whiskeysour_button.image = whiskeysour_image
+    whiskeysour_button.place(x=895, y=300, width=200, height=200)
+
+    # Create label for cocktail feature(s) -> Name, price
+    whiskeysour_information = tk.Label(cocktail_frame, text="Name: Whiskey Sour \nPrice: 8.99£")
+    whiskeysour_information.place(x=945, y=505)
+
+    go_back_to_main_menu()
+
+    go_back_to_main_menu()
+
+def print_items_in_mocktail_menu():
+    # width = 245px,  height=186px for future references
+
+    clear_screen()
+    time_on_screen()
+    # Create a frame
+    mocktail_frame = tk.Frame(main_pos_name)
+    mocktail_frame.pack(fill=tk.BOTH, expand=True)
+
+    # Create a button and add mocktail_daiquiri.png
+    daiquiri_image = tk.PhotoImage(file="images/mocktails/mocktail_daiquiri.png").subsample(x=4, y=4)
+    daiquiri_button = tk.Button(mocktail_frame, image=daiquiri_image)
+    daiquiri_button.image = daiquiri_image
+    daiquiri_button.place(x=40, y=5, width=200, height=200)
+
+    # Create label for mocktail feature(s) -> Name, price
+    daiquiri_information = tk.Label(mocktail_frame, text="Name: Daiquiri \nPrice: 8.99£")
+    daiquiri_information.place(x=75, y=210)
+
+    # Create a button and add mocktail_mimosa.png
+    mimosa_image = tk.PhotoImage(file="images/mocktails/mocktail_mimosa.png").subsample(x=4, y=4)
+    mimosa_button = tk.Button(mocktail_frame, image=mimosa_image)
+    mimosa_button.image = mimosa_image
+    mimosa_button.place(x=315, y=5, width=200, height=200)
+
+    # Create label for mocktail feature(s) -> Name, price
+    mimosa_information = tk.Label(mocktail_frame, text="Name: Mimosa \nPrice: 9.99£")
+    mimosa_information.place(x=375, y=210)
+
+    # Create a button and add mocktail_pinacolada.png
+    pinacolada_image = tk.PhotoImage(file="images/mocktails/mocktail_pinacolada.png").subsample(x=4, y=4)
+    pinacolada_button = tk.Button(mocktail_frame, image=pinacolada_image)
+    pinacolada_button.image = pinacolada_image
+    pinacolada_button.place(x=610, y=5, width=200, height=200)
+
+    # Create label for mocktail feature(s) -> Name, price
+    pinacolada_information = tk.Label(mocktail_frame, text="Name: Pina Colada \nPrice: 10.99£")
+    pinacolada_information.place(x=670, y=210)
+
+    # Create a button and add mocktail_punch.png
+    punch_image = tk.PhotoImage(file="images/mocktails/mocktail_punch.png").subsample(x=4, y=4)
+    punch_button = tk.Button(mocktail_frame, image=punch_image)
+    punch_button.image = punch_image
+    punch_button.place(x=895, y=5, width=200, height=200)
+
+    # Create label for mocktail feature(s) -> Name, price
+    punch_information = tk.Label(mocktail_frame, text="Name: Punch \nPrice: 7.99£")
+    punch_information.place(x=960, y=210)
+
+    # Create a button and add mocktail_sangria.png
+    sangria_image = tk.PhotoImage(file="images/mocktails/mocktail_sangria.png").subsample(x=4, y=4)
+    sangria_button = tk.Button(mocktail_frame, image=sangria_image)
+    sangria_button.image = sangria_image
+    sangria_button.place(x=40, y=300, width=200, height=200)
+
+    # Create label for mocktail feature(s) -> Name, price
+    sangria_information = tk.Label(mocktail_frame, text="Name: Sangria \nPrice: 8.45£")
+    sangria_information.place(x=80, y=505)
+
+    # Create a button and add mocktail_shirlytemple.png
+    shirlytemple_image = tk.PhotoImage(file="images/mocktails/mocktail_shirlytemple.png").subsample(x=4, y=4)
+    shirlytemple_button = tk.Button(mocktail_frame, image=shirlytemple_image)
+    shirlytemple_button.image = shirlytemple_image
+    shirlytemple_button.place(x=315, y=300, width=200, height=200)
+
+    # Create label for mocktail feature(s) -> Name, price
+    shirlytemple_information = tk.Label(mocktail_frame, text="Name: Shirley Temple \nPrice: 9.50£")
+    shirlytemple_information.place(x=370, y=505)
+
+    # Create a button and add mocktail_virginmargarita.png
+    virginmargarita_image = tk.PhotoImage(file="images/mocktails/mocktail_virginmargarita.png").subsample(x=4, y=4)
+    virginmargarita_button = tk.Button(mocktail_frame, image=virginmargarita_image)
+    virginmargarita_button.image = virginmargarita_image
+    virginmargarita_button.place(x=610, y=300, width=200, height=200)
+
+    # Create label for mocktail feature(s) -> Name, price
+    virginmargarita_information = tk.Label(mocktail_frame, text="Name: Virgin Margarita \nPrice: 10.50£")
+    virginmargarita_information.place(x=655, y=505)
+
+    # Create a button and add mocktail_mojito.png
+    mojito_image = tk.PhotoImage(file="images/mocktails/mocktail_virginmojito.png").subsample(x=4, y=4)
+    mojito_button = tk.Button(mocktail_frame, image=mojito_image)
+    mojito_button.image = mojito_image
+    mojito_button.place(x=895, y=300, width=200, height=200)
+
+    # Create label for mocktail feature(s) -> Name, price
+    mojito_information = tk.Label(mocktail_frame, text="Name: Mojito \nPrice: 7.99£")
+    mojito_information.place(x=960, y=505)
+
+    go_back_to_main_menu()
+
 def main_menu():
     clear_screen()
     time_on_screen()
@@ -356,27 +540,39 @@ def main_menu():
     button_section_frame = tk.Frame(main_pos_name)
     button_section_frame.pack(fill="both", expand=True)
     # FOOD BUTTON
-    food_button = tk.Button(button_section_frame, text="FOOD", bg="RED", font=('bold'), fg="WHITE", command=print_items_in_food_menu)
+    food_button_image = tk.PhotoImage(file="images/other/food_button.png").subsample(x=4,y=4)
+    food_button = tk.Button(button_section_frame, image=food_button_image, command=print_items_in_food_menu)
+    food_button.image = food_button_image
     food_button.place(x=50, y=50, width=200, height=200)
 
     # DRINK BUTTON
-    drink_button = tk.Button(button_section_frame, text="DRINK", bg="BLUE", font=('bold'), fg="WHITE", command=print_items_in_drink_menu)
+    drink_button_image = tk.PhotoImage(file="images/other/drink_button.png").subsample(x=4, y=4)
+    drink_button = tk.Button(button_section_frame, image=drink_button_image, command=print_items_in_drink_menu)
+    drink_button.image = drink_button_image
     drink_button.place(x=300, y=50, width=200, height=200)
 
     # COCKTAILS BUTTON
-    cocktails_button = tk.Button(button_section_frame, text="COCKTAILS", bg="GREEN", font=('bold'), fg="WHITE")
+    cocktails_button_image = tk.PhotoImage(file="images/other/cocktail_button.png").subsample(x=2, y=2)
+    cocktails_button = tk.Button(button_section_frame, image=cocktails_button_image, command=print_items_in_cocktail_menu)
+    cocktails_button.image = cocktails_button_image
     cocktails_button.place(x=550, y=50, width=200, height=200)
 
     # KIDS BUTTON
-    kids_menu_button = tk.Button(button_section_frame, text="KIDS MENU", bg="ORANGE", font=('bold'), fg="WHITE")
+    kids_menu_button_image = tk.PhotoImage(file="images/other/kidsmenu_button.png").subsample(x=2, y=2)
+    kids_menu_button = tk.Button(button_section_frame, image=kids_menu_button_image, fg="WHITE")
+    kids_menu_button.image = kids_menu_button_image
     kids_menu_button.place(x=50, y=300, width=200, height=200)
 
     # MOCKTAILS BUTTON
-    mocktails_button = tk.Button(button_section_frame, text="MOCKTAILS", bg="GREY", font=('bold'), fg="WHITE")
+    mocktails_button_image = tk.PhotoImage(file="images/other/mocktails_button.png").subsample(x=4, y=4)
+    mocktails_button = tk.Button(button_section_frame, image=mocktails_button_image, command=print_items_in_mocktail_menu)
+    mocktails_button.image = mocktails_button_image
     mocktails_button.place(x=300, y=300, width=200, height=200)
 
     # COFFEE BUTTON
-    coffee_button = tk.Button(button_section_frame, text="COFFEE", bg="BLACK", font=('bold'), fg="WHITE")
+    coffee_button_image = tk.PhotoImage(file="images/other/coffee_button.png").subsample(x=4, y=4)
+    coffee_button = tk.Button(button_section_frame, image=coffee_button_image, fg="WHITE")
+    coffee_button.image = coffee_button_image
     coffee_button.place(x=550, y=300, width=200, height=200)
 #  update_button = tk.Button(button_section_frame, text="UPDATE", command=treeview_print_to_screen).pack()
     treeview_create_customer_basket()
