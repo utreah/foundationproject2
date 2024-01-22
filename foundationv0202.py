@@ -762,7 +762,7 @@ def main_menu():
     treeview_create_customer_basket()
 # Set main settings, name and title
 main_pos_name = tk.Tk()
-main_pos_name.title("Foundation Project Market with GUI version 0.0.1.0")
+main_pos_name.title("Foundation Project Market with GUI version 0.2.0.2")
 main_pos_name.resizable(False,False)
 
 # Get screen res and set window size and set geometry size using screen res + window size
