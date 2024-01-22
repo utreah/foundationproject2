@@ -1,9 +1,20 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter.messagebox import showerror, showwarning, showinfo
 # Find a way to count how many item is in product_name. Adjust product_quantity with that information
 main_pos_name = tk.Tk()
 
-
+def item_selected(event): # NOT WORKING
+    selected_items = customer_basket_treeview.selection()
+    for selected_item in selected_items:
+        item = customer_basket_treeview.item(selected_item)
+        record = item['values']
+        print(f'item: {item}')
+        showinfo(title='Information', message=','.join(str(item) for item in record))
+        customer_basket_treeview.delete(selected_item)
+        print(f'REMOVE after click: {product_mix_name_size}')
+        product_mix_name_size.remove(selected_item)
+        print(f'After remove: {product_mix_name_size}')
 
 # Define treeview identifiers
 treeview_customer_basket_identifier_columns = ('product_name', 'product_size', 'product_quantity', 'product_price')
@@ -16,7 +27,7 @@ customer_basket_treeview.heading('product_quantity', text='Product Quantity')
 customer_basket_treeview.heading('product_price', text='Product Price')
 customer_basket_treeview.pack()
 # Create a tuple and append product information
-
+customer_basket_treeview.bind('<<TreeviewSelect>>', item_selected)
 # ARRAYS
 product_name = ["test1", "test2", "test3", "test1", "test1", "test2", "test3","TEST1"]
 product_quantity = ["1", "2", "3", "1", "1", "2", "3"]
