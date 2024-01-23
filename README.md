@@ -18,10 +18,23 @@
 
 7. **Bug Squashing:** I've been fixing various bugs to keep the app running smoothly. And also added more bugs to squash later on XD
 
-8. **No More Karen:** Now owners can remove item from basket to satisfy their customers.
+
+<br>
+# Foundation Project 0.3.1.9
+
+**Foundation Project**, Version 0.3.1.9
+
+## Updates
+
+1. **No More Karen:** Now owners can remove item from basket to satisfy their customers.
+
+2. **Less Human, More computer:** Now software automatically calculates Basket's total price. NO MORE CALCULATOR 😎
+
+3. Additional Text
+
+<br>
 
 ## Coming Up
-
 
 1. **Delete Item from Basket:** Soon, you'll be able to remove items from your basket. [ADDED]
 
@@ -31,7 +44,7 @@
 
 4. **Payment Button:** Making payments will become more convenient with our upcoming payment button.
 
-5. **Additional Texts:**
+5. **Additional Texts:** [ADDED]
    - "Total:"
    - "Tax (18%):"
    - "Discount Percentage"
