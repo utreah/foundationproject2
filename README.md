@@ -18,10 +18,12 @@
 
 7. **Bug Squashing:** I've been fixing various bugs to keep the app running smoothly. And also added more bugs to squash later on XD
 
+8. **No More Karen:** Now owners can remove item from basket to satisfy their customers.
+
 ## Coming Up
 
 
-1. **Delete Item from Basket:** Soon, you'll be able to remove items from your basket.
+1. **Delete Item from Basket:** Soon, you'll be able to remove items from your basket. [ADDED]
 
 2. **Information Button for Each Section:** I will be adding an information button to provide details for each section.
 
