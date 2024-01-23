@@ -3,18 +3,23 @@ from tkinter import ttk
 from tkinter.messagebox import showerror, showwarning, showinfo
 # Find a way to count how many item is in product_name. Adjust product_quantity with that information
 main_pos_name = tk.Tk()
+test_tuple = []
 
-def item_selected(event): # NOT WORKING
+def item_selected(event): # WORKING NEEDS TO BE IMPLEMENTED
     selected_items = customer_basket_treeview.selection()
     for selected_item in selected_items:
         item = customer_basket_treeview.item(selected_item)
         record = item['values']
-        print(f'item: {item}')
-        showinfo(title='Information', message=','.join(str(item) for item in record))
+        print(type(record))
         customer_basket_treeview.delete(selected_item)
-        print(f'REMOVE after click: {product_mix_name_size}')
-        product_mix_name_size.remove(selected_item)
-        print(f'After remove: {product_mix_name_size}')
+
+    test_tuple.append((record[0], record[1], record[2], record[3]))
+    print(f'test_tuple: {test_tuple[0]}\nproduct_mix: {product_mix_name_size[0]}')
+    if test_tuple[0] in product_mix_name_size:
+        product_mix_name_size.remove(test_tuple[0])
+        test_tuple.pop(0)
+        print(f'test_tuple: {test_tuple}\nproduct_mix: {product_mix_name_size}')
+
 
 # Define treeview identifiers
 treeview_customer_basket_identifier_columns = ('product_name', 'product_size', 'product_quantity', 'product_price')
@@ -30,9 +35,9 @@ customer_basket_treeview.pack()
 customer_basket_treeview.bind('<<TreeviewSelect>>', item_selected)
 # ARRAYS
 product_name = ["test1", "test2", "test3", "test1", "test1", "test2", "test3","TEST1"]
-product_quantity = ["1", "2", "3", "1", "1", "2", "3"]
+product_quantity = [1, 2, 3, 1, 1, 2, 3]
 product_size = ["S", "L", "S", "S", "S", "L", "S","L"]
-product_price = ["1", "2", "5", "1", "1", "2", "5","8"]
+product_price = [1, 2, 5, 1, 1, 2, 5, 8]
 product_mix_name_size = []
 test_seen = set()
 #for i in range(0,len(product_name)):
