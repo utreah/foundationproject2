@@ -21,9 +21,10 @@
 8. **No More Karen:** Now owners can remove item from basket to satisfy their customers.
 
 <br>
-# Foundation Project 0.3.0.1
+# Foundation Project 0.3.1.9
 
-**Foundation Project**, Version 0.3.0.1
+**Foundation Project**, Version 0.3.1.9
+
 <br>
 ## Coming Up
 1. **Delete Item from Basket:** Soon, you'll be able to remove items from your basket. [ADDED]
