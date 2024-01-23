@@ -30,6 +30,8 @@
 
 2. **Less Human, More computer:** Now software automatically calculates Basket's total price. NO MORE CALCULATOR 😎
 
+3. Additional Text
+
 <br>
 
 ## Coming Up
@@ -42,7 +44,7 @@
 
 4. **Payment Button:** Making payments will become more convenient with our upcoming payment button.
 
-5. **Additional Texts:**
+5. **Additional Texts:** [ADDED]
    - "Total:"
    - "Tax (18%):"
    - "Discount Percentage"
