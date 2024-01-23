@@ -18,12 +18,17 @@
 
 7. **Bug Squashing:** I've been fixing various bugs to keep the app running smoothly. And also added more bugs to squash later on XD
 
-8. **No More Karen:** Now owners can remove item from basket to satisfy their customers.
 
 <br>
-# Foundation Project 0.3.0.1
+# Foundation Project 0.3.1.9
 
-**Foundation Project**, Version 0.3.0.1
+**Foundation Project**, Version 0.3.1.9
+
+## Updates
+
+1. **No More Karen:** Now owners can remove item from basket to satisfy their customers.
+
+2. **Less Human, More computer:** Now software automatically calculates Basket's total price. NO MORE CALCULATOR 😎
 
 <br>
 
