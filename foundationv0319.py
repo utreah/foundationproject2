@@ -18,6 +18,7 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [WIP] Add adjust quantity(increment) on click treeview item.
 # [WIP] Add Discount button to validate coupon and apply discount.
 # [WIP] Voucher?
+# [WIP] App only works on wide screen. Find a way to fit it into smaller screens
 PRODUCT_LIST = ["Lamb Kebab Wrap", "Lahmacun", "Cag Kebab", "Iskender", "Ezogelin", "Kisir", "Mercimek Kofte", "Sarma"]
 PRICE_LIST = [(10.99,  15.99), (3.99, 5.99), (18.99, 25.99), (16.99, 22.99), (7.99, 9.99), (5.49, 6.85), (8.45, 9.99), (7.58, 9.45)]
 CUSTOMER_BASKET = []
@@ -819,7 +820,7 @@ main_pos_name = tk.Tk()
 
 
 main_pos_name.title("Foundation Project Market with GUI version 0.3.1.9")
-main_pos_name.resizable(False,False)
+main_pos_name.resizable(False, False)
 # Get screen res and set window size and set geometry size using screen res + window size
 get_screen_res_width = main_pos_name.winfo_screenwidth()
 get_screen_res_height = main_pos_name.winfo_screenheight()
