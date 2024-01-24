@@ -45,11 +45,12 @@ def append_product(product_name, product_size):
     if product_size == 'S':
         CUSTOMER_BASKET.append(product_name)
         CUSTOMER_BASKET_PRICE.append(PRICE_LIST[food_index][0])
+        CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
     else:
         product_name_capitalized = product_name.upper()
         CUSTOMER_BASKET.append(product_name_capitalized)
         CUSTOMER_BASKET_PRICE.append(PRICE_LIST[food_index][1])
-    CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
+        CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
     showinfo(title="Choice", message=f"'{product_name}' has been added to your basket")
     destroy_child_window()
 def remove_product():
@@ -82,6 +83,10 @@ def treeview_product_selected(event):
     #x=840, y=40, height=650, width=825
     remove_product_from_basket = tk.Button(button_section_frame, text="REMOVE ITEM", bg='red', fg='white', command=lambda: [remove_product(), remove_product_from_basket.destroy()], font=("Helvetica,40"))
     remove_product_from_basket.place(x=840, y=700, width=400, height=200)
+    change_product_quantity = tk.Button(button_section_frame, text="CHANGE QUANTITY", bg='green', fg='white', font=("Arial", 15))
+    change_product_quantity.place(x=1680, y=265,width=200,height=200)
+    change_product_price = tk.Button(button_section_frame, text="CHANGE PRICE", bg='grey', fg='white', font=("Arial", 15))
+    change_product_price.place(x=1680, y=489, width=200,height=200)
 def get_portion(product_name):
     global isChildWindowOpen
 
@@ -157,7 +162,7 @@ def treeview_create_customer_basket():
 #    customer_basket_treeview.configure(yscroll= treeview_scrollbar.set)
 #    treeview_scrollbar.grid(row=0, column=1, sticky='ns')
     treeview_print_to_screen()
-    calculate_basket_total()
+    basket_total_information()
     customer_basket_treeview.bind('<<TreeviewSelect>>', treeview_product_selected)
 
 def on_close_child_window():
@@ -768,6 +773,11 @@ def main_menu():
     coffee_button = tk.Button(button_section_frame, image=coffee_button_image, command=print_items_in_coffee_menu)
     coffee_button.image = coffee_button_image
     coffee_button.place(x=550, y=300, width=200, height=200)
+
+    # Discount Button
+    discount_button = tk.Button(button_section_frame, text="Discount", bg='blue', fg='white', font=("Arial", 20))
+    discount_button.place(x=1680, y=40, width=200, height=200)
+
 #  update_button = tk.Button(button_section_frame, text="UPDATE", command=treeview_print_to_screen).pack()
     treeview_create_customer_basket()
 
@@ -778,24 +788,27 @@ def go_back_to_main_menu():
     another_test_button.image = back_to_menu_button_image_to_display
     another_test_button.place(x=1715, y=800, width=200, height=200)
 # Set main settings, name and title
-
-def calculate_basket_total():
-    voucher = False
-    calculate_total = 0
+def calculate_basket_subtotal():
+    calculate_subtotal = 0
     for i in range(len(CUSTOMER_BASKET_PRICE)):
-        calculate_total += CUSTOMER_BASKET_PRICE[i]
+        calculate_subtotal += CUSTOMER_BASKET_PRICE[i]
+    return round(calculate_subtotal,2)
+def calculate_basket_total():
+    pass
+def basket_total_information():
+#    voucher = False
     labelframe = tk.LabelFrame(main_pos_name)
     labelframe.place(x=1266, y=733,width=400 , height=202)
-    subtotal_label = tk.Label(labelframe, text=f"Subtotal: {round(calculate_total,2)}£", font=("Helvetica", 20))
+    subtotal_label = tk.Label(labelframe, text=f"Subtotal: {calculate_basket_subtotal()}£", font=("Helvetica", 20))
     subtotal_label.pack()
     discount_label = tk.Label(labelframe, text=f"Discount: ", font=("Helvetica", 20))
     discount_label.pack()
     tax_label = tk.Label(labelframe, text=f"Tax(%18)", font=("Helvetica", 20))
     tax_label.pack()
-    if voucher:
-        voucher = tk.Label(labelframe, text="Voucher: ", font=("Helvetica",20))
-        voucher.pack()
-    total = tk.Label(labelframe, text=f"Total: ", font=("Helvetica", 20))
+#    if voucher:
+#        voucher = tk.Label(labelframe, text="Voucher: ", font=("Helvetica",20))
+#        voucher.pack()
+    total = tk.Label(labelframe, text=f"Total: {calculate_basket_total}", font=("Helvetica", 20))
     total.pack()
 
 
