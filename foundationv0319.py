@@ -15,11 +15,11 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [DONE] Remove 'Name:' from product information
 # [DONE] Make a button to remove item from treeview and CUSTOMER_BASKET
 # [WIP] Add adjust price button on click treeview item.
-# [WIP] Add adjust quantity(increment) on click treeview item.
-# [WIP] Add Discount button to validate coupon and apply discount.
-# [WIP] Voucher?
-# [TEMP FIXED] App only works on wide screen. Find a way to fit it into smaller screens <- temporaraly fixed
-# Kullanıcıdan alınan % discount oranını bir diziye kaydet ve o diziden o oranı kullanarak indirimi yap ve o oranı sil.
+# [WIP] Add adjust quantity(increment) on click treeview item. -> Get amount of quantity from user and use chosen item's name and size to find the product. Multiply that product with a loop and append it customer basket
+# [DONE] Add Discount button to validate coupon and apply discount.
+# [DISCONTINUED] Voucher?
+# [TEMP FIXED] App only works on wide screen. Find a way to fit it into smaller screens <- temporaraly fixed, now it ask user to set their resolution 1920 or higher
+# [DONE] Save the percentage to a variable and use that variable to calculate discounted price.
 PRODUCT_LIST = ["Lamb Kebab Wrap", "Lahmacun", "Cag Kebab", "Iskender", "Ezogelin", "Kisir", "Mercimek Kofte", "Sarma"]
 PRICE_LIST = [(10.99,  15.99), (3.99, 5.99), (18.99, 25.99), (16.99, 22.99), (7.99, 9.99), (5.49, 6.85), (8.45, 9.99), (7.58, 9.45)]
 CUSTOMER_BASKET = []
@@ -30,20 +30,20 @@ treeview_tuple = []
 treeview_seen = set()
 test_tuple = []
 def find_product_price(product_name, product_size):
-    get_product_index = 0
-    for i in range(0,len(PRODUCT_LIST)):
-        if product_name.lower() in PRODUCT_LIST[i].lower():
-            get_product_index = i
+    get_product_index = find_index_of_product(product_name)
 
     if product_size == 'S':
         return PRICE_LIST[get_product_index][0]
     return PRICE_LIST[get_product_index][1]
+def find_index_of_product(product_name):
+    get_product_index = 0
+    for i in range(0,len(PRODUCT_LIST)):
+        if product_name.lower() in PRODUCT_LIST[i].lower():
+            get_product_index = i
+    return get_product_index
 def append_product(product_name, product_size):
-    food_index = 0
-    # Find Dish's INDEX in PRODUCT_LIST
-    for product in PRODUCT_LIST:
-        if product == product_name:
-            food_index = PRODUCT_LIST.index(product)
+    food_index = find_index_of_product(product_name)
+    print(f"index {food_index}")
     if product_size == 'S':
         CUSTOMER_BASKET.append(product_name)
         CUSTOMER_BASKET_PRICE.append(PRICE_LIST[food_index][0])
@@ -62,10 +62,10 @@ def remove_product():
         customer_basket_treeview.delete(selected_item)
         get_selected_product_info = item['values']
         remove_product_from_basket(get_selected_product_info[0], get_selected_product_info[1])
-
-#    clear_screen()
-#    main_menu()
-#    treeview_print_to_screen()
+def adjust_quantity():
+    for selected_item in customer_basket_treeview.selection():
+        item = customer_basket_treeview.item(selected_item)
+        print(item)
 
     print(f'AFTER -> Customer Basket : {CUSTOMER_BASKET}, Customer Basket Price : {CUSTOMER_BASKET_PRICE}, Customer Basket Product Size: {CUSTOMER_BASKET_PRODUCT_SIZE}')
 def remove_product_from_basket(product_name, product_size):
@@ -81,11 +81,13 @@ def remove_product_from_basket(product_name, product_size):
     else:
         CUSTOMER_BASKET_PRODUCT_SIZE.remove('L')
         CUSTOMER_BASKET_PRICE.remove(find_product_price(product_name, product_size))
+    treeview_print_to_screen()
+    basket_total_information()
 def treeview_product_selected(event):
     #x=840, y=40, height=650, width=825
     remove_product_from_basket = tk.Button(button_section_frame, text="REMOVE ITEM", bg='red', fg='white', command=lambda: [remove_product(), remove_product_from_basket.destroy()], font=("Helvetica,40"))
     remove_product_from_basket.place(x=840, y=700, width=400, height=200)
-    change_product_quantity = tk.Button(button_section_frame, text="CHANGE QUANTITY", bg='green', fg='white', font=("Arial", 15))
+    change_product_quantity = tk.Button(button_section_frame, text="CHANGE QUANTITY", bg='green', fg='white', font=("Arial", 15), command=adjust_quantity)
     change_product_quantity.place(x=1680, y=265,width=200,height=200)
     change_product_price = tk.Button(button_section_frame, text="CHANGE PRICE", bg='grey', fg='white', font=("Arial", 15))
     change_product_price.place(x=1680, y=489, width=200,height=200)
@@ -796,7 +798,6 @@ def calculate_basket_subtotal():
     return round(calculate_subtotal,2)
 
 def create_discount_window():
-    isPressed() # make it appear after discount so move it to calculate discount function.
     global  discount_child_window
     discount_child_window = tk.Toplevel()
     # Get screen width and height. Set width and height for child_window
@@ -810,47 +811,57 @@ def create_discount_window():
     discount_child_window.geometry(f'{200}x{200}+{center_x}+{center_y}')
     discount_child_window.resizable(False,False)
     discount_child_window.title("Discount Window")
-    ten_percent_discount_button = tk.Button(discount_child_window, text="%10", bg="black", fg="white", font=("Arial", 10))
+    ten_percent_discount_button = tk.Button(discount_child_window, text="%10", bg="black", fg="white", font=("Arial", 10), command=lambda:discount_percentage(10))
     ten_percent_discount_button.place(width=100, height=100,x=0,y=0)
-    thirty_percent_discount_button = tk.Button(discount_child_window, text="%30", bg="green", fg="white", font=("Arial", 10))
+    thirty_percent_discount_button = tk.Button(discount_child_window, text="%30", bg="green", fg="white", font=("Arial", 10), command=lambda:discount_percentage(30))
     thirty_percent_discount_button.place(width=100, height=100,x=100,y=0)
-    fifty_percent_discount_button = tk.Button(discount_child_window, text="%50", bg="red", fg="white", font=("Arial", 10))
+    fifty_percent_discount_button = tk.Button(discount_child_window, text="%50", bg="red", fg="white", font=("Arial", 10), command=lambda:discount_percentage(50))
     fifty_percent_discount_button.place(width=100, height=100,x=0,y=100)
-    set_discount_amount_button = tk.Button(discount_child_window, text="SET PERCENTAGE", bg="blue", fg="white", font=("Arial", 8))
+    set_discount_amount_button = tk.Button(discount_child_window, text="SET PERCENTAGE", bg="blue", fg="white", font=("Arial", 8)) # will be added text box to get values
     set_discount_amount_button.place(width=100, height=100, x=100,y=100)
     discount_child_window.mainloop()
-is_key_pressed = False
+is_discount_button_pressed = False
 def isPressed():
-    global is_key_pressed
-    is_key_pressed = not is_key_pressed
-    basket_total_information()
+    global is_discount_button_pressed
+    if not is_discount_button_pressed:
+        is_discount_button_pressed = not is_discount_button_pressed
+        basket_total_information()
 def calculate_basket_total():
-    return "N/A"
+    first_price_calculation = round(calculate_basket_subtotal() - (calculate_basket_subtotal()*discount_percentage_variable)/100,2)
+    second_price_calculation = (first_price_calculation*18)/100 + first_price_calculation
+    return round(second_price_calculation,2)
 
+discount_percentage_variable = 0
+def discount_percentage(percentage):
+    global discount_percentage_variable
+    discount_percentage_variable = percentage
+    print(is_discount_button_pressed)
+    isPressed()
 def basket_total_information():
 #    voucher = False
     labelframe = tk.LabelFrame(main_pos_name)
     labelframe.place(x=1266, y=733,width=400 , height=202)
     subtotal_label = tk.Label(labelframe, text=f"Subtotal: {calculate_basket_subtotal()}£", font=("Helvetica", 20))
     subtotal_label.pack()
-    if is_key_pressed:
-        discount_label = tk.Label(labelframe, text=f"Discount: ", font=("Helvetica", 20))
+    if is_discount_button_pressed:
+        discount_label = tk.Label(labelframe, text=f"Discount: {round((calculate_basket_subtotal()*discount_percentage_variable)/100,2)}£", font=("Helvetica", 20))
         discount_label.pack()
     tax_label = tk.Label(labelframe, text=f"Tax(%18)", font=("Helvetica", 20))
     tax_label.pack()
 #    if voucher:
 #        voucher = tk.Label(labelframe, text="Voucher: ", font=("Helvetica",20))
 #        voucher.pack()
-    total = tk.Label(labelframe, text=f"Total: {calculate_basket_total()}", font=("Helvetica", 20))
+    total = tk.Label(labelframe, text=f"Total: {calculate_basket_total()}£", font=("Helvetica", 20))
     total.pack()
 
 
 
 
 def check_computer_res():
-    if get_screen_res_width != 1920:
-        if get_screen_res_height != 1920:
-            showerror("ERROR", "Please set your resolution to 1920x1080 in order to run this program PROPERLY.")
+    print(f'{get_screen_res_width}, {get_screen_res_height}')
+    if get_screen_res_width != 1920 or get_screen_res_width < 1920:
+        if get_screen_res_height < 1080:
+            showerror("ERROR", "Please set your resolution to 1920x1080 higher in order to run this program PROPERLY.")
             main_pos_name.destroy()
 main_pos_name = tk.Tk()
 
@@ -862,7 +873,7 @@ get_screen_res_width = main_pos_name.winfo_screenwidth()
 get_screen_res_height = main_pos_name.winfo_screenheight()
 set_window_size_width = -10
 set_window_size_height = 0
-
+check_computer_res()
 main_pos_name.geometry(f"{get_screen_res_width}x{get_screen_res_height-72}+{set_window_size_width}+{set_window_size_height}")
 main_menu()
 
