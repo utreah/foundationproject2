@@ -62,10 +62,50 @@ def remove_product():
         customer_basket_treeview.delete(selected_item)
         get_selected_product_info = item['values']
         remove_product_from_basket(get_selected_product_info[0], get_selected_product_info[1])
-def adjust_quantity():
+
+def set_quantity(spinbox_quantity, product_name, product_size, product_price):
+    remove_product_from_basket(product_name, product_size)
+    for i in range(spinbox_quantity):
+#        product_price = int(product_price)
+        CUSTOMER_BASKET.append(product_name)
+        CUSTOMER_BASKET_PRICE.append(find_product_price(product_name, product_size))
+        CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
+    print(f"Customer basket : {CUSTOMER_BASKET}, {CUSTOMER_BASKET_PRICE}, {CUSTOMER_BASKET_PRODUCT_SIZE}")
+    treeview_print_to_screen()
+    basket_total_information()
+    destroy_child_window()
+
+def get_product_information_to_adjust_quantity():
     for selected_item in customer_basket_treeview.selection():
         item = customer_basket_treeview.item(selected_item)
         print(item)
+        get_product_info = item['values']
+        global isChildWindowOpen
+
+        # Create a top-level window (child windows)
+        if not isChildWindowOpen:
+            global child_window
+            child_window = tk.Toplevel()
+            child_window.title("Portions")
+            # Get screen width and height. Set width and height for child_window
+            screen_width = child_window.winfo_screenwidth()
+            screen_height = child_window.winfo_screenheight()
+            window_width = 200
+            window_height = 100
+            # Find center of the screen
+            center_x = int(screen_width / 2 - window_width / 2)
+            center_y = int(screen_height / 2 - window_height / 2)
+            child_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+
+            isChildWindowOpen = True
+            child_window.resizable(False, False)
+            get_quantity_from_spinbox = tk.IntVar()
+            quantity_label = tk.Label(child_window, text="Please choose a quantity").pack()
+            quantity_spinbox = ttk.Spinbox(child_window,from_= 1, to=50, textvariable=get_quantity_from_spinbox,wrap=True).pack()
+            set_quantity_button = tk.Button(child_window, text="Set Quantity", command=lambda: (set_quantity(get_quantity_from_spinbox.get(), get_product_info[0], get_product_info[1], get_product_info[3]) , )).pack()
+
+            child_window.protocol('WM_DELETE_WINDOW', lambda: on_close_child_window())
+            child_window.mainloop()
 
     print(f'AFTER -> Customer Basket : {CUSTOMER_BASKET}, Customer Basket Price : {CUSTOMER_BASKET_PRICE}, Customer Basket Product Size: {CUSTOMER_BASKET_PRODUCT_SIZE}')
 def remove_product_from_basket(product_name, product_size):
@@ -87,7 +127,7 @@ def treeview_product_selected(event):
     #x=840, y=40, height=650, width=825
     remove_product_from_basket = tk.Button(button_section_frame, text="REMOVE ITEM", bg='red', fg='white', command=lambda: [remove_product(), remove_product_from_basket.destroy()], font=("Helvetica,40"))
     remove_product_from_basket.place(x=840, y=700, width=400, height=200)
-    change_product_quantity = tk.Button(button_section_frame, text="CHANGE QUANTITY", bg='green', fg='white', font=("Arial", 15), command=adjust_quantity)
+    change_product_quantity = tk.Button(button_section_frame, text="CHANGE QUANTITY", bg='green', fg='white', font=("Arial", 15), command=get_product_information_to_adjust_quantity)
     change_product_quantity.place(x=1680, y=265,width=200,height=200)
     change_product_price = tk.Button(button_section_frame, text="CHANGE PRICE", bg='grey', fg='white', font=("Arial", 15))
     change_product_price.place(x=1680, y=489, width=200,height=200)
