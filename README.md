@@ -40,11 +40,13 @@
 
 2. **Information Button for Each Section:** I will be adding an information button to provide details for each section.
 
-3. **Discount Button:** What do you want me to explain.
+3. **Discount Button:** What do you want me to explain. [ADDED]
 
-4. **Payment Button:** Making payments will become more convenient with our upcoming payment button.
+4. **CHANGE QUANTITY BUTTON:** User will be able to change quantity of the product in the basket. May the ability to change quantity force be with you. [ADDED]
 
-5. **Additional Texts:** [ADDED]
+5. **Payment Button:** Making payments will become more convenient with our upcoming payment button.
+
+6. **Additional Texts:** [ADDED]
    - "Total:"
    - "Tax (18%):"
    - "Discount Percentage"
