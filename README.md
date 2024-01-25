@@ -42,6 +42,8 @@ Foundation Project 0.4.0.0
 
 3. **Discounts Made Simple:** Explore the newly added Discount Button for an explanation on how to save even more on your purchases.
 
+4. **Bug Squashing:** Solved some, created some. To be or not to be a bug, that is the question. -Shakespeare(Found of Microsoft)
+
 <br>
 
 ## Coming Up
