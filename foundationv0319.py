@@ -18,7 +18,7 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [WIP] Add adjust quantity(increment) on click treeview item.
 # [WIP] Add Discount button to validate coupon and apply discount.
 # [WIP] Voucher?
-# [WIP] App only works on wide screen. Find a way to fit it into smaller screens
+# [TEMP FIXED] App only works on wide screen. Find a way to fit it into smaller screens <- temporaraly fixed
 PRODUCT_LIST = ["Lamb Kebab Wrap", "Lahmacun", "Cag Kebab", "Iskender", "Ezogelin", "Kisir", "Mercimek Kofte", "Sarma"]
 PRICE_LIST = [(10.99,  15.99), (3.99, 5.99), (18.99, 25.99), (16.99, 22.99), (7.99, 9.99), (5.49, 6.85), (8.45, 9.99), (7.58, 9.45)]
 CUSTOMER_BASKET = []
@@ -776,12 +776,11 @@ def main_menu():
     coffee_button.place(x=550, y=300, width=200, height=200)
 
     # Discount Button
-    discount_button = tk.Button(button_section_frame, text="Discount", bg='blue', fg='white', font=("Arial", 20))
+    discount_button = tk.Button(button_section_frame, text="Discount", bg='blue', fg='white', font=("Arial", 20), command=lambda: (isPressed(), create_discount_window()))
     discount_button.place(x=1680, y=40, width=200, height=200)
 
 #  update_button = tk.Button(button_section_frame, text="UPDATE", command=treeview_print_to_screen).pack()
     treeview_create_customer_basket()
-
 def go_back_to_main_menu():
     back_to_menu_button_image = tk.PhotoImage(file="images/other/back_to_main_menu.png")
     back_to_menu_button_image_to_display = back_to_menu_button_image.subsample(x=4,y=4)
@@ -794,28 +793,63 @@ def calculate_basket_subtotal():
     for i in range(len(CUSTOMER_BASKET_PRICE)):
         calculate_subtotal += CUSTOMER_BASKET_PRICE[i]
     return round(calculate_subtotal,2)
+
+def create_discount_window():
+    global  discount_child_window
+    discount_child_window = tk.Toplevel()
+    # Get screen width and height. Set width and height for child_window
+    screen_width = discount_child_window.winfo_screenwidth()
+    screen_height = discount_child_window.winfo_screenheight()
+    window_width = 200
+    window_height = 100
+    # Find center of the screen
+    center_x = int(screen_width / 2 - window_width / 2)
+    center_y = int(screen_height / 2 - window_height / 2)
+    discount_child_window.geometry(f'{200}x{200}+{center_x}+{center_y}')
+    discount_child_window.resizable(False,False)
+    discount_child_window.title("Discount Window")
+    ten_percent_discount_button = tk.Button(discount_child_window, text="%10", bg="black", fg="white", font=("Arial", 10))
+    ten_percent_discount_button.place(width=100, height=100,x=0,y=0)
+    thirty_percent_discount_button = tk.Button(discount_child_window, text="%30", bg="green", fg="white", font=("Arial", 10))
+    thirty_percent_discount_button.place(width=100, height=100,x=100,y=0)
+    fifty_percent_discount_button = tk.Button(discount_child_window, text="%50", bg="red", fg="white", font=("Arial", 10))
+    fifty_percent_discount_button.place(width=100, height=100,x=0,y=100)
+    set_discount_amount_button = tk.Button(discount_child_window, text="SET PERCENTAGE", bg="blue", fg="white", font=("Arial", 8))
+    set_discount_amount_button.place(width=100, height=100, x=100,y=100)
+    discount_child_window.mainloop()
+is_key_pressed = False
+def isPressed():
+    global is_key_pressed
+    is_key_pressed = not is_key_pressed
+    basket_total_information()
 def calculate_basket_total():
-    pass
+    return "N/A"
+
 def basket_total_information():
 #    voucher = False
     labelframe = tk.LabelFrame(main_pos_name)
     labelframe.place(x=1266, y=733,width=400 , height=202)
     subtotal_label = tk.Label(labelframe, text=f"Subtotal: {calculate_basket_subtotal()}£", font=("Helvetica", 20))
     subtotal_label.pack()
-    discount_label = tk.Label(labelframe, text=f"Discount: ", font=("Helvetica", 20))
-    discount_label.pack()
+    if is_key_pressed:
+        discount_label = tk.Label(labelframe, text=f"Discount: ", font=("Helvetica", 20))
+        discount_label.pack()
     tax_label = tk.Label(labelframe, text=f"Tax(%18)", font=("Helvetica", 20))
     tax_label.pack()
 #    if voucher:
 #        voucher = tk.Label(labelframe, text="Voucher: ", font=("Helvetica",20))
 #        voucher.pack()
-    total = tk.Label(labelframe, text=f"Total: {calculate_basket_total}", font=("Helvetica", 20))
+    total = tk.Label(labelframe, text=f"Total: {calculate_basket_total()}", font=("Helvetica", 20))
     total.pack()
 
 
 
 
-
+def check_computer_res():
+    if get_screen_res_width != 1920:
+        if get_screen_res_height != 1920:
+            showerror("ERROR", "Please set your resolution to 1920x1080 in order to run this program PROPERLY.")
+            main_pos_name.destroy()
 main_pos_name = tk.Tk()
 
 
@@ -826,6 +860,7 @@ get_screen_res_width = main_pos_name.winfo_screenwidth()
 get_screen_res_height = main_pos_name.winfo_screenheight()
 set_window_size_width = -10
 set_window_size_height = 0
+
 main_pos_name.geometry(f"{get_screen_res_width}x{get_screen_res_height-72}+{set_window_size_width}+{set_window_size_height}")
 main_menu()
 
@@ -833,7 +868,6 @@ main_menu()
 
 #test_button = tk.Button(main_pos_name, text="Test Button", command=customer_basket_treeview)
 #test_button.place(x=600,y=800)
-
 
 
 main_pos_name.mainloop()
