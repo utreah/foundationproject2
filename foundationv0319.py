@@ -20,6 +20,8 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [DISCONTINUED] Voucher?
 # [TEMP FIXED] App only works on wide screen. Find a way to fit it into smaller screens <- temporaraly fixed, now it ask user to set their resolution 1920 or higher
 # [DONE] Save the percentage to a variable and use that variable to calculate discounted price.
+# [BUG] Change price updates price labes but not treeview
+# UCL AND CAMBRIDGE UNI for CS
 PRODUCT_LIST = ["Lamb Kebab Wrap", "Lahmacun", "Cag Kebab", "Iskender", "Ezogelin", "Kisir", "Mercimek Kofte", "Sarma"]
 PRICE_LIST = [(10.99,  15.99), (3.99, 5.99), (18.99, 25.99), (16.99, 22.99), (7.99, 9.99), (5.49, 6.85), (8.45, 9.99), (7.58, 9.45)]
 CUSTOMER_BASKET = []
@@ -74,7 +76,44 @@ def set_quantity(spinbox_quantity, product_name, product_size, product_price):
     treeview_print_to_screen()
     basket_total_information()
     destroy_child_window()
+def change_price(new_product_price, product_name, product_size):
+    index_of_product = find_index_of_product(product_name)
+    CUSTOMER_BASKET_PRICE[index_of_product] = new_product_price
+    print(CUSTOMER_BASKET_PRICE[index_of_product])
+    treeview_print_to_screen()
+    basket_total_information()
+    destroy_child_window()
 
+
+def get_input_from_user_to_adjust_price():
+    global isChildWindowOpen
+    if not isChildWindowOpen:
+        for selected_item in customer_basket_treeview.selection():
+            item = customer_basket_treeview.item(selected_item)
+            print(item)
+            get_product_info = item['values']
+        global child_window
+        child_window = tk.Toplevel()
+        child_window.title("Portions")
+        # Get screen width and height. Set width and height for child_window
+        screen_width = child_window.winfo_screenwidth()
+        screen_height = child_window.winfo_screenheight()
+        window_width = 200
+        window_height = 100
+        # Find center of the screen
+        center_x = int(screen_width / 2 - window_width / 2)
+        center_y = int(screen_height / 2 - window_height / 2)
+        child_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+        isChildWindowOpen = True
+        child_window.resizable(False, False)
+        set_price_label = tk.Label(child_window, text="Please set new price").pack()
+        price_var = tk.IntVar()
+        get_price_entry = tk.Entry(child_window, textvariable=price_var).pack()
+        get_price_button = tk.Button(child_window, text="Set new price", command=lambda: change_price(price_var.get(), get_product_info[0], get_product_info[1])).pack()
+        print(price_var.get())
+
+        child_window.protocol('WM_DELETE_WINDOW', lambda: on_close_child_window())
+        child_window.mainloop()
 def get_product_information_to_adjust_quantity():
     for selected_item in customer_basket_treeview.selection():
         item = customer_basket_treeview.item(selected_item)
@@ -129,7 +168,7 @@ def treeview_product_selected(event):
     remove_product_from_basket.place(x=840, y=700, width=400, height=200)
     change_product_quantity = tk.Button(button_section_frame, text="CHANGE QUANTITY", bg='green', fg='white', font=("Arial", 15), command=get_product_information_to_adjust_quantity)
     change_product_quantity.place(x=1680, y=265,width=200,height=200)
-    change_product_price = tk.Button(button_section_frame, text="CHANGE PRICE", bg='grey', fg='white', font=("Arial", 15))
+    change_product_price = tk.Button(button_section_frame, text="CHANGE PRICE", bg='grey', fg='white', font=("Arial", 15), command=get_input_from_user_to_adjust_price)
     change_product_price.place(x=1680, y=489, width=200,height=200)
 def get_portion(product_name):
     global isChildWindowOpen
