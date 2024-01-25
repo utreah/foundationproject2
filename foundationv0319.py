@@ -8,20 +8,23 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [BUG/FIXED] ValueError: 'LAMB KEBAB WRAP' is not in list// check append_product function
 # [BUG/FIXED] If customer dont choose a size, it automatically adds LARGE portion name and price but not product size.
 # [BUG/FIXED] Portion window not opening after closing. You have to restart the whole application in order to make it work.
+# [BUG/FIXED] Now adjust quantity can increase or decrease quantity of the product.
+# [TEMP FIXED] App only works on wide screen. Find a way to fit it into smaller screens <- temporaraly fixed, now it ask user to set their resolution 1920x1080 or higher
 # [BUG] Large portions are being added to CUSTOMER_BASKET capitalized. Not important but can be fixed to improve eye appeal.
+# [BUG/SEMI-FIXED] When portion/price changes through a button, button still remains on the screen. Problem fixed by calling main_menu() function but is not appealing to eye as it is flicks for a second to create the main menu.
 # [DONE] ADD FOOD NAME TO RADIOBUTTON CHILD WINDOW -> Please choose a food portion: {FOOD NAME}
 # [DONE] Using food's name, match the name with PRODUCT_LIST-> get index of the food and use that index to get food's portion prices.
 # [DONE] Now it calculates the price based on quantity.
 # [DONE] Remove 'Name:' from product information
 # [DONE] Make a button to remove item from treeview and CUSTOMER_BASKET
-# [WIP] Add adjust price button on click treeview item.
-# [WIP] Add adjust quantity(increment) on click treeview item. -> Get amount of quantity from user and use chosen item's name and size to find the product. Multiply that product with a loop and append it customer basket
+# [DONE] Add adjust price button when an item on treeview is chosen.
+# [DONE] Add adjust quantity(increment) on click treeview item. -> Get amount of quantity from user and use chosen item's name and size to find the product. Multiply that product with a loop and append it customer basket
 # [DONE] Add Discount button to validate coupon and apply discount.
-# [DISCONTINUED] Voucher?
-# [TEMP FIXED] App only works on wide screen. Find a way to fit it into smaller screens <- temporaraly fixed, now it ask user to set their resolution 1920 or higher
 # [DONE] Save the percentage to a variable and use that variable to calculate discounted price.
-# [BUG] Change price updates price labes but not treeview
-# UCL AND CAMBRIDGE UNI for CS
+""" [BUG] Change price updates price labes but not treeview <- problem occurs because treeview get price information directly from PRICE_LIST TUPLE via find_product_price() function. 
+Solution 1: Get treeview price from CUSTOMER_BASKET_PRICE or ask customer to how many price changes they'd like to do. Based on user input remove 'userinput' amount from both treeview 
+and CUSTOMER_BASKET, CUSTOMER_BASKET_SIZE, CUSTOMER_BASKET_PRICE then add it back with new price + {name_of_the_product} + 'Price changed' """
+
 PRODUCT_LIST = ["Lamb Kebab Wrap", "Lahmacun", "Cag Kebab", "Iskender", "Ezogelin", "Kisir", "Mercimek Kofte", "Sarma"]
 PRICE_LIST = [(10.99,  15.99), (3.99, 5.99), (18.99, 25.99), (16.99, 22.99), (7.99, 9.99), (5.49, 6.85), (8.45, 9.99), (7.58, 9.45)]
 CUSTOMER_BASKET = []
@@ -66,23 +69,34 @@ def remove_product():
         remove_product_from_basket(get_selected_product_info[0], get_selected_product_info[1])
 
 def set_quantity(spinbox_quantity, product_name, product_size, product_price):
-    remove_product_from_basket(product_name, product_size)
+    if len(CUSTOMER_BASKET) > 1:
+        for _ in range(len(CUSTOMER_BASKET)):
+            remove_product_from_basket(product_name, product_size)
+    print(f'Q before : {len(CUSTOMER_BASKET)}')
     for i in range(spinbox_quantity):
 #        product_price = int(product_price)
         CUSTOMER_BASKET.append(product_name)
         CUSTOMER_BASKET_PRICE.append(find_product_price(product_name, product_size))
         CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
-    print(f"Customer basket : {CUSTOMER_BASKET}, {CUSTOMER_BASKET_PRICE}, {CUSTOMER_BASKET_PRODUCT_SIZE}")
+
+
+    print(f"Q after: {len(CUSTOMER_BASKET)}")
     treeview_print_to_screen()
     basket_total_information()
     destroy_child_window()
+    main_menu()
 def change_price(new_product_price, product_name, product_size):
     index_of_product = find_index_of_product(product_name)
-    CUSTOMER_BASKET_PRICE[index_of_product] = new_product_price
-    print(CUSTOMER_BASKET_PRICE[index_of_product])
-    treeview_print_to_screen()
-    basket_total_information()
-    destroy_child_window()
+    if new_product_price == CUSTOMER_BASKET_PRICE[index_of_product]:
+        showerror("Error", "New and old price can not be same!")
+        treeview_print_to_screen()
+        basket_total_information()
+        destroy_child_window()
+    else:
+        CUSTOMER_BASKET_PRICE[index_of_product] = new_product_price
+        treeview_print_to_screen()
+        basket_total_information()
+        destroy_child_window()
 
 
 def get_input_from_user_to_adjust_price():
@@ -109,7 +123,7 @@ def get_input_from_user_to_adjust_price():
         set_price_label = tk.Label(child_window, text="Please set new price").pack()
         price_var = tk.IntVar()
         get_price_entry = tk.Entry(child_window, textvariable=price_var).pack()
-        get_price_button = tk.Button(child_window, text="Set new price", command=lambda: change_price(price_var.get(), get_product_info[0], get_product_info[1])).pack()
+        get_price_button = tk.Button(child_window, text="Set new price", command=lambda: [change_price(price_var.get(), get_product_info[0], get_product_info[1])]).pack()
         print(price_var.get())
 
         child_window.protocol('WM_DELETE_WINDOW', lambda: on_close_child_window())
@@ -117,10 +131,8 @@ def get_input_from_user_to_adjust_price():
 def get_product_information_to_adjust_quantity():
     for selected_item in customer_basket_treeview.selection():
         item = customer_basket_treeview.item(selected_item)
-        print(item)
         get_product_info = item['values']
         global isChildWindowOpen
-
         # Create a top-level window (child windows)
         if not isChildWindowOpen:
             global child_window
@@ -139,14 +151,15 @@ def get_product_information_to_adjust_quantity():
             isChildWindowOpen = True
             child_window.resizable(False, False)
             get_quantity_from_spinbox = tk.IntVar()
-            quantity_label = tk.Label(child_window, text="Please choose a quantity").pack()
-            quantity_spinbox = ttk.Spinbox(child_window,from_= 1, to=50, textvariable=get_quantity_from_spinbox,wrap=True).pack()
-            set_quantity_button = tk.Button(child_window, text="Set Quantity", command=lambda: (set_quantity(get_quantity_from_spinbox.get(), get_product_info[0], get_product_info[1], get_product_info[3]) , )).pack()
+            quantity_label = tk.Label(child_window, text="Please choose a quantity")
+            quantity_label.pack()
+            quantity_spinbox = tk.Spinbox(child_window,from_= 1, to=50, textvariable=get_quantity_from_spinbox,wrap=True)
+            quantity_spinbox.pack()
+            set_quantity_button = tk.Button(child_window, text="Set Quantity", command=lambda: (set_quantity(get_quantity_from_spinbox.get(), get_product_info[0], get_product_info[1], get_product_info[3]) , ))
+            set_quantity_button.pack()
 
             child_window.protocol('WM_DELETE_WINDOW', lambda: on_close_child_window())
             child_window.mainloop()
-
-    print(f'AFTER -> Customer Basket : {CUSTOMER_BASKET}, Customer Basket Price : {CUSTOMER_BASKET_PRICE}, Customer Basket Product Size: {CUSTOMER_BASKET_PRODUCT_SIZE}')
 def remove_product_from_basket(product_name, product_size):
     get_index_of_product = 0
     for i in range(len(CUSTOMER_BASKET)):
@@ -166,9 +179,11 @@ def treeview_product_selected(event):
     #x=840, y=40, height=650, width=825
     remove_product_from_basket = tk.Button(button_section_frame, text="REMOVE ITEM", bg='red', fg='white', command=lambda: [remove_product(), remove_product_from_basket.destroy()], font=("Helvetica,40"))
     remove_product_from_basket.place(x=840, y=700, width=400, height=200)
-    change_product_quantity = tk.Button(button_section_frame, text="CHANGE QUANTITY", bg='green', fg='white', font=("Arial", 15), command=get_product_information_to_adjust_quantity)
+    global change_product_quantity
+    change_product_quantity = tk.Button(button_section_frame, text="CHANGE QUANTITY", bg='green', fg='white', font=("Helvetica", 15), command=get_product_information_to_adjust_quantity)
     change_product_quantity.place(x=1680, y=265,width=200,height=200)
-    change_product_price = tk.Button(button_section_frame, text="CHANGE PRICE", bg='grey', fg='white', font=("Arial", 15), command=get_input_from_user_to_adjust_price)
+    global change_product_price
+    change_product_price = tk.Button(button_section_frame, text="CHANGE PRICE", bg='grey', fg='white', font=("Helvetica", 15), command=get_input_from_user_to_adjust_price)
     change_product_price.place(x=1680, y=489, width=200,height=200)
 def get_portion(product_name):
     global isChildWindowOpen
@@ -217,7 +232,7 @@ def clear_treeview_all():
     for item in customer_basket_treeview.get_children():
         customer_basket_treeview.delete(item)
 def treeview_print_to_screen():
-    print(f"Treeview : {CUSTOMER_BASKET}, {CUSTOMER_BASKET_PRICE}, {CUSTOMER_BASKET_PRODUCT_SIZE}")
+#    print(f"Treeview : {CUSTOMER_BASKET}, {CUSTOMER_BASKET_PRICE}, {CUSTOMER_BASKET_PRODUCT_SIZE}")
     clear_treeview_all()
     # Create a tuple, count how many, add if a product in list multiple amount to seen list and append product information
     for product_name_treeview, loop_counter in zip(CUSTOMER_BASKET, range(0, len(CUSTOMER_BASKET))):
@@ -258,6 +273,10 @@ def destroy_child_window():
     isChildWindowOpen = False
     print("Child windows has been successfully destroyed")
 
+def clear_screen():
+    for widgets in main_pos_name.winfo_children():
+        widgets.destroy()
+
 
 def time_on_screen():
     # Create a label frame for time
@@ -276,9 +295,6 @@ def get_computer_time_date():
     get_time = datetime.datetime.now()
     time_label_top_left_corner.config(text=f"DATE: {get_time.day}/0{get_time.month}/{get_time.year} TIME: {get_time.hour}:{get_time.minute}:{get_time.second}")
     time_label_top_left_corner.after(1000,get_computer_time_date)
-def clear_screen():
-    for widgets in main_pos_name.winfo_children():
-        widgets.destroy()
 def print_items_in_food_menu():
     # width = 245px,  height=186px for future references
 
