@@ -1,10 +1,13 @@
+import tkinter as tk
 
-# Find a way to count how many item is in product_name. Adjust product_quantity with that information
-#main_pos_name = tk.Tk()
-test_list = [1,2,3,4,5]
-print(f"Test list before : {test_list}")
-za = 31
-test_list[0] = za
-print("Test List After:" , test_list)
+def button_click(event):
+    # Access the widget name/identifier
+    widget_name = event.widget.winfo_name()
+    print("Widget Name:", widget_name)
 
-#main_pos_name.mainloop()
+root = tk.Tk()
+button = tk.Button(root, text="Click Me", name="my_button", command=button_click)
+button.pack()
+button.bind("<Button-1>", button_click)
+
+root.mainloop()
