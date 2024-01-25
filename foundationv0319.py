@@ -19,6 +19,7 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [WIP] Add Discount button to validate coupon and apply discount.
 # [WIP] Voucher?
 # [TEMP FIXED] App only works on wide screen. Find a way to fit it into smaller screens <- temporaraly fixed
+# Kullanıcıdan alınan % discount oranını bir diziye kaydet ve o diziden o oranı kullanarak indirimi yap ve o oranı sil.
 PRODUCT_LIST = ["Lamb Kebab Wrap", "Lahmacun", "Cag Kebab", "Iskender", "Ezogelin", "Kisir", "Mercimek Kofte", "Sarma"]
 PRICE_LIST = [(10.99,  15.99), (3.99, 5.99), (18.99, 25.99), (16.99, 22.99), (7.99, 9.99), (5.49, 6.85), (8.45, 9.99), (7.58, 9.45)]
 CUSTOMER_BASKET = []
@@ -776,7 +777,7 @@ def main_menu():
     coffee_button.place(x=550, y=300, width=200, height=200)
 
     # Discount Button
-    discount_button = tk.Button(button_section_frame, text="Discount", bg='blue', fg='white', font=("Arial", 20), command=lambda: (isPressed(), create_discount_window()))
+    discount_button = tk.Button(button_section_frame, text="Discount", bg='blue', fg='white', font=("Arial", 20), command=create_discount_window)
     discount_button.place(x=1680, y=40, width=200, height=200)
 
 #  update_button = tk.Button(button_section_frame, text="UPDATE", command=treeview_print_to_screen).pack()
@@ -795,6 +796,7 @@ def calculate_basket_subtotal():
     return round(calculate_subtotal,2)
 
 def create_discount_window():
+    isPressed() # make it appear after discount so move it to calculate discount function.
     global  discount_child_window
     discount_child_window = tk.Toplevel()
     # Get screen width and height. Set width and height for child_window
