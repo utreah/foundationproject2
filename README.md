@@ -26,28 +26,29 @@
 
 ## Updates
 
-1. **No More Karen:** Now owners can remove item from basket to satisfy their customers.
+1. **No More Karen:** Owners can now easily satisfy their customers by removing items from the basket.
 
-2. **Less Human, More computer:** Now software automatically calculates Basket's total price. NO MORE CALCULATOR 😎
+2. **Less Human, More computer:** Say goodbye to manual calculations as our software now automatically calculates the total price of your basket, saving you the hassle of using a calculator.
 
-3. Additional Text
+<br>
+
+Foundation Project 0.4.0.0
+
+## Updates
+
+1. **Improved Quantity Control:** Users can now effortlessly change the quantity of products in their basket, granting them greater flexibility in their shopping experience.
+
+2. **Delete Items with Ease:** Soon, you'll have the ability to remove items from your basket, ensuring your shopping list is always up to date.
+
+3. **Discounts Made Simple:** Explore the newly added Discount Button for an explanation on how to save even more on your purchases.
+
+4. **Bug Squashing:** Solved some, created some. To be or not to be a bug, that is the question. -Shakespeare(Found of Microsoft)
 
 <br>
 
 ## Coming Up
 
-1. **Delete Item from Basket:** Soon, you'll be able to remove items from your basket. [ADDED]
+1. **Information Button for Each Section:** I will be adding an information button to provide details for each section.
 
-2. **Information Button for Each Section:** I will be adding an information button to provide details for each section.
+2. **Payment Button:** Making payments will become more convenient with our upcoming payment button.
 
-3. **Discount Button:** What do you want me to explain. [ADDED]
-
-4. **CHANGE QUANTITY BUTTON:** User will be able to change quantity of the product in the basket. May the ability to change quantity force be with you. [ADDED]
-
-5. **Payment Button:** Making payments will become more convenient with our upcoming payment button.
-
-6. **Additional Texts:** [ADDED]
-   - "Total:"
-   - "Tax (18%):"
-   - "Discount Percentage"
-   - "Total After Discount"
