@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 import datetime
 from tkinter.messagebox import showerror, showwarning, showinfo
+# GITHUB : https://github.com/utreah/foundationproject2
+
 # [BUG/FIXED] Make "Remove from basket" button disappear after an item is unselected on treeview.
 # [BUG/FIXED] creates multiple child_window(s) when button pressed more than once. Find a way to check whether a child window is open or not.
 # [BUG/FIXED] When you insert same food it doesnt increase the quantity but makes a new entry and increases the quantity by 1
@@ -21,7 +23,10 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [DONE] Add adjust quantity(increment) on click treeview item. -> Get amount of quantity from user and use chosen item's name and size to find the product. Multiply that product with a loop and append it customer basket
 # [DONE] Add Discount button to validate coupon and apply discount.
 # [DONE] Save the percentage to a variable and use that variable to calculate discounted price.
-""" [BUG] Change price updates price labes but not treeview <- problem occurs because treeview get price information directly from PRICE_LIST TUPLE via find_product_price() function. 
+# [WIP] Set discount percentage not implemented yet.
+# [WIP] Add payment page button(only by card)
+# [WIP] 
+""" [BUG] Change price updates price labels but not treeview <- problem occurs because treeview get price information directly from PRICE_LIST TUPLE via find_product_price() function. 
 Solution 1: Get treeview price from CUSTOMER_BASKET_PRICE or ask customer to how many price changes they'd like to do. Based on user input remove 'userinput' amount from both treeview 
 and CUSTOMER_BASKET, CUSTOMER_BASKET_SIZE, CUSTOMER_BASKET_PRICE then add it back with new price + {name_of_the_product} + 'Price changed' """
 
@@ -34,6 +39,7 @@ isChildWindowOpen = False
 treeview_tuple = []
 treeview_seen = set()
 test_tuple = []
+print(CUSTOMER_BASKET_PRICE)
 def find_product_price(product_name, product_size):
     get_product_index = find_index_of_product(product_name)
 
@@ -79,8 +85,6 @@ def set_quantity(spinbox_quantity, product_name, product_size, product_price):
         CUSTOMER_BASKET_PRICE.append(find_product_price(product_name, product_size))
         CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
 
-
-    print(f"Q after: {len(CUSTOMER_BASKET)}")
     treeview_print_to_screen()
     basket_total_information()
     destroy_child_window()
@@ -97,6 +101,7 @@ def change_price(new_product_price, product_name, product_size):
         treeview_print_to_screen()
         basket_total_information()
         destroy_child_window()
+    print(CUSTOMER_BASKET_PRICE)
 
 
 def get_input_from_user_to_adjust_price():
@@ -930,7 +935,6 @@ discount_percentage_variable = 0
 def discount_percentage(percentage):
     global discount_percentage_variable
     discount_percentage_variable = percentage
-    print(is_discount_button_pressed)
     isPressed()
 def basket_total_information():
 #    voucher = False
