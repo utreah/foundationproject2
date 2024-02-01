@@ -43,10 +43,11 @@ Foundation Project 0.4.0.0
 3. **Bug Squashing:** Solved some, created some. To be or not to be a bug, that is the question. -Shakespeare(Founder of Microsoft)
 
 <br>
+Foundation Project 1.0.0.0
 
-## Coming Up
+## UPDATES
 
-1. **Information Button for Each Section:** I will be adding an information button to provide details for each section.
+1. **Payment Button**:
+2. **Zapping Bugs**:
 
-2. **Payment Button:** Making payments will become more convenient with our upcoming payment button.
 
