@@ -18,6 +18,7 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [BUG/FIXED] Fixed a problem that causing remove_product_from_basket and find_product_price functions not working.
 # [BUG/FIXED] If there is 3 or more when you change the price it only keeps 1 items og price and changes the rest of it to changed price.
 # [BUG/FIXED] Change quantity adds X times of that product instead of changing it to user input.
+# [BUG/FIXED] You can't change product price if its already changed.
 # [DONE] ADD FOOD NAME TO RADIOBUTTON CHILD WINDOW -> Please choose a food portion: {FOOD NAME}
 # [DONE] Using food's name, match the name with PRODUCT_LIST-> get index of the food and use that index to get food's portion prices.
 # [DONE] Now it calculates the price based on quantity.
@@ -210,15 +211,21 @@ def get_product_information_to_adjust_quantity():
 
 def change_price(new_product_price, product_name, product_size):
     index_of_product = find_index_of_product(product_name)
-
+    check_sub = "CHANGED PRICE"
+    if check_sub in product_name:
+        showerror("Error", f"'{product_name}' already has changed price! Try another or remove '{product_name}' and add a new one.")
+        basket_total_information()
+        destroy_child_window()
+        treeview_print_to_screen()
+        return
     if new_product_price == CUSTOMER_BASKET_PRICE[index_of_product]:
         showerror("Error", "New and old price can not be same!")
     else:
-        for name_test, price_test in zip(CUSTOMER_BASKET, CUSTOMER_BASKET_PRICE):
-            if name_test in product_name:
-                CUSTOMER_BASKET.remove(name_test)
+        for match_product_name, price_test in zip(CUSTOMER_BASKET, CUSTOMER_BASKET_PRICE):
+            if match_product_name in product_name:
+                CUSTOMER_BASKET.remove(match_product_name)
                 CUSTOMER_BASKET_PRICE.remove(CUSTOMER_BASKET_PRICE[index_of_product])
-                CUSTOMER_BASKET_PRODUCT_SIZE.remove(product_size)
+                CUSTOMER_BASKET_PRODUCT_SIZE.remove(CUSTOMER_BASKET_PRODUCT_SIZE[index_of_product])
                 CUSTOMER_BASKET.append(f"{product_name} CHANGED PRICE")
                 CUSTOMER_BASKET_PRICE.append(new_product_price)
                 CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
