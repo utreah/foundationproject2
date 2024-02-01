@@ -14,7 +14,7 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [TEMP FIXED] App only works on wide screen. Find a way to fit it into smaller screens <- temporarily fixed, now it ask user to set their resolution 1920x1080 or higher
 # [BUG/SEMI-FIXED] Large portions are being added to CUSTOMER_BASKET capitalized. Not important but can be fixed to improve eye appeal.
 # [BUG/SEMI-FIXED] When portion/price changes through a button, button still remains on the screen. Problem fixed by calling main_menu() function but is not appealing to eye as it is flicks for a second to create the main menu.
-# [BUG/FIXED] Fixed a problem that was affecting change_price. Now it works with Double data type numbers.
+# [BUG/FIXED] Fixed a problem that was affecting change_price. Now its DoubleVar
 # [BUG/FIXED] Fixed a problem that causing remove_product_from_basket and find_product_price functions not working.
 # [BUG/FIXED] If there is 3 or more when you change the price it only keeps 1 items og price and changes the rest of it to changed price.
 # [BUG/FIXED] Change quantity adds X times of that product instead of changing it to user input.
