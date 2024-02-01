@@ -54,7 +54,6 @@ isChildWindowOpen = False
 treeview_tuple = []
 treeview_seen = set()
 test_tuple = []
-print(CUSTOMER_BASKET_PRICE)
 
 
 def get_portion(product_name):
@@ -119,7 +118,6 @@ def find_index_of_product(product_name):
 
 def append_product(product_name, product_size):
     food_index = find_index_of_product(product_name)
-    print(f"index {food_index}")
     if product_size == 'S':
         CUSTOMER_BASKET.append(product_name)
         CUSTOMER_BASKET_PRICE.append(PRICE_LIST[food_index][0])
@@ -270,6 +268,7 @@ def get_input_from_user_to_adjust_price():
 
 
 def create_payment_screen():
+    global payment_window
     payment_window = tk.Toplevel()
     payment_window.title("Payment Screen")
     payment_window.resizable(False, False)
@@ -285,19 +284,47 @@ def create_payment_screen():
     payment_image = tk.PhotoImage(file="images/other/payment_card_image.png")
     payment_label = tk.Label(payment_window, image=payment_image)
     payment_label.pack()
-    payment_check_input = tk.Button(payment_window, text="CHECK INFO", font=("Helvetica", 25))
-    payment_check_input.place(x=00, y=420, width=650, height=47)
-    card_16_digit_number_intvar = tk.IntVar()
+    card_16_digit_number_intvar = tk.StringVar()
     card_16_digit_text_box = tk.Entry(payment_window, textvariable=card_16_digit_number_intvar, font=("Helvetica", 30))
     card_16_digit_text_box.place(x=155, y=225, width=400, height=50)
     card_cardholder_fname_lname_stringvar = tk.StringVar()
     card_cardholder_fname_lname = tk.Entry(payment_window, textvariable=card_cardholder_fname_lname_stringvar, font=("Helvetica", 30))
     card_cardholder_fname_lname.place(x=25, y=325, width=375, height=55)
-    card_validuntil_intvar = tk.IntVar()
+    card_validuntil_intvar = tk.StringVar()
     card_validuntil_entry = tk.Entry(payment_window, textvariable=card_validuntil_intvar, font=("Helvetica", 30))
     card_validuntil_entry.place(x=465, y=295, width=150, height=60)
 
+    payment_check_input = tk.Button(payment_window, text="CHECK INFO", font=("Helvetica", 25), command=lambda:validate_card_info(card_16_digit_number_intvar.get(), card_cardholder_fname_lname_stringvar.get(), card_validuntil_intvar.get()))
+    payment_check_input.place(x=00, y=420, width=650, height=47)
+
     payment_window.mainloop()
+
+def remove_everything_on_basket():
+    global is_discount_button_pressed
+    for i in range(len(CUSTOMER_BASKET)):
+        CUSTOMER_BASKET.remove(CUSTOMER_BASKET[i])
+        CUSTOMER_BASKET_PRODUCT_SIZE.remove(CUSTOMER_BASKET_PRODUCT_SIZE[i])
+        CUSTOMER_BASKET_PRICE.remove(CUSTOMER_BASKET_PRICE[i])
+    is_discount_button_pressed = False
+    treeview_print_to_screen()
+    basket_total_information()
+
+digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+def validate_card_info(card_digit, card_holder, card_valid):
+    if calculate_basket_total() == 0:
+        showwarning("Error", f"Basket total must be greater than 0.\nCurrent basket total is: {round(calculate_basket_total()),1}")
+        return
+    if card_digit.isdigit() and len(card_digit) == 16 and card_valid.isdigit() and len(card_valid) == 4:
+        if card_holder not in digits:
+            showinfo("Payment Completed!", f"Amount {calculate_basket_total()} has been paid.")
+            remove_everything_on_basket()
+            destroy_payment_window()
+    else:
+        showerror("Error", f"\nCard must be 16 digit long: {card_digit},\nCard date must be 4 digit long.{card_valid},\n{card_holder}")
+
+
+def destroy_payment_window():
+    payment_window.destroy()
 
 
 def treeview_product_selected(event):
@@ -365,7 +392,6 @@ def destroy_child_window():
     child_window.destroy()
     global isChildWindowOpen
     isChildWindowOpen = False
-    print("Child windows has been successfully destroyed")
 
 
 def print_items_in_food_menu():
