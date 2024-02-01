@@ -19,6 +19,7 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [BUG/FIXED] If there is 3 or more when you change the price it only keeps 1 items og price and changes the rest of it to changed price.
 # [BUG/FIXED] Change quantity adds X times of that product instead of changing it to user input.
 # [BUG/FIXED] You can't change product price if its already changed.
+# [BUG/FIXED] Now you can't apply multiple discounts. Only one per Software run.
 # [DONE] ADD FOOD NAME TO RADIOBUTTON CHILD WINDOW -> Please choose a food portion: {FOOD NAME}
 # [DONE] Using food's name, match the name with PRODUCT_LIST-> get index of the food and use that index to get food's portion prices.
 # [DONE] Now it calculates the price based on quantity.
@@ -30,7 +31,6 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [DONE] Save the percentage to a variable and use that variable to calculate discounted price.
 # [DONE] All discount percentages has been added.
 # [WIP] Add payment page button(only by card)
-# [BUG] Force software to apply ONLY ONCE a run to apply discount.
 
 
 """ [BUG/FIXED] Change price updates price labels but not treeview <- problem occurs because treeview get price information directly from PRICE_LIST TUPLE via find_product_price() function. 
@@ -219,7 +219,7 @@ def change_price(new_product_price, product_name, product_size):
         treeview_print_to_screen()
         return
     if new_product_price == CUSTOMER_BASKET_PRICE[index_of_product]:
-        showerror("Error", "New and old price can not be same!")
+        showwarning("Warning", "New and old price can not be same!")
     else:
         for match_product_name, price_test in zip(CUSTOMER_BASKET, CUSTOMER_BASKET_PRICE):
             if match_product_name in product_name:
@@ -1000,30 +1000,33 @@ def go_back_to_main_menu():
 
 
 def create_discount_window():
-    global discount_child_window
-    discount_child_window = tk.Toplevel()
-    # Get screen width and height. Set width and height for child_window
-    screen_width = discount_child_window.winfo_screenwidth()
-    screen_height = discount_child_window.winfo_screenheight()
-    window_width = 200
-    window_height = 100
-    # Find center of the screen
-    center_x = int(screen_width / 2 - window_width / 2)
-    center_y = int(screen_height / 2 - window_height / 2)
-    discount_child_window.geometry(f'{200}x{200}+{center_x}+{center_y}')
-    discount_child_window.resizable(False, False)
-    discount_child_window.title("Discount Window")
-    ten_percent_discount_button = tk.Button(discount_child_window, text="%10", bg="black", fg="white", font=("Arial", 10), command=lambda: discount_percentage(10))
-    ten_percent_discount_button.place(width=100, height=100, x=0, y=0)
-    thirty_percent_discount_button = tk.Button(discount_child_window, text="%30", bg="green", fg="white", font=("Arial", 10), command=lambda: discount_percentage(30))
-    thirty_percent_discount_button.place(width=100, height=100, x=100, y=0)
-    fifty_percent_discount_button = tk.Button(discount_child_window, text="%50", bg="red", fg="white", font=("Arial", 10), command=lambda: discount_percentage(50))
-    fifty_percent_discount_button.place(width=100, height=100, x=0, y=100)
-    set_discount_amount_button = tk.Button(discount_child_window, text="%100", bg="blue", fg="white", font=("Arial", 8), command=lambda: discount_percentage(100))
-    set_discount_amount_button.place(width=100, height=100, x=100, y=100)
-    discount_child_window.mainloop()
-
-
+    if not is_discount_button_pressed:
+        global discount_child_window
+        discount_child_window = tk.Toplevel()
+        # Get screen width and height. Set width and height for child_window
+        screen_width = discount_child_window.winfo_screenwidth()
+        screen_height = discount_child_window.winfo_screenheight()
+        window_width = 200
+        window_height = 100
+        # Find center of the screen
+        center_x = int(screen_width / 2 - window_width / 2)
+        center_y = int(screen_height / 2 - window_height / 2)
+        discount_child_window.geometry(f'{200}x{200}+{center_x}+{center_y}')
+        discount_child_window.resizable(False, False)
+        discount_child_window.title("Discount Window")
+        ten_percent_discount_button = tk.Button(discount_child_window, text="%10", bg="black", fg="white", font=("Arial", 10), command=lambda: discount_percentage(10))
+        ten_percent_discount_button.place(width=100, height=100, x=0, y=0)
+        thirty_percent_discount_button = tk.Button(discount_child_window, text="%30", bg="green", fg="white", font=("Arial", 10), command=lambda: discount_percentage(30))
+        thirty_percent_discount_button.place(width=100, height=100, x=100, y=0)
+        fifty_percent_discount_button = tk.Button(discount_child_window, text="%50", bg="red", fg="white", font=("Arial", 10), command=lambda: discount_percentage(50))
+        fifty_percent_discount_button.place(width=100, height=100, x=0, y=100)
+        set_discount_amount_button = tk.Button(discount_child_window, text="%100", bg="blue", fg="white", font=("Arial", 8), command=lambda: discount_percentage(100))
+        set_discount_amount_button.place(width=100, height=100, x=100, y=100)
+        discount_child_window.mainloop()
+    else:
+        showinfo("Discount Window Information", "A discount has already been applied. You cannot apply or change your discount.")
+def destroy_discount_child_window():
+    discount_child_window.destroy()
 is_discount_button_pressed = False
 discount_percentage_variable = 0
 
@@ -1031,6 +1034,7 @@ discount_percentage_variable = 0
 def discount_percentage(percentage):
     global discount_percentage_variable
     discount_percentage_variable = percentage
+    destroy_discount_child_window()
     is_pressed()
 
 
@@ -1075,7 +1079,7 @@ def basket_total_information():
 def check_computer_res():
     if get_screen_res_width != 1920 or get_screen_res_width < 1920:
         if get_screen_res_height < 1080:
-            showerror("ERROR", "Please set your resolution to 1920x1080 higher in order to run this program PROPERLY.")
+            showerror("ERROR!", "Please set your resolution to 1920x1080 higher in order to run this program PROPERLY.")
             main_pos_name.destroy()
 
 
