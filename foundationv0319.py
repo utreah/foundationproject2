@@ -14,6 +14,8 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [TEMP FIXED] App only works on wide screen. Find a way to fit it into smaller screens <- temporaraly fixed, now it ask user to set their resolution 1920x1080 or higher
 # [BUG] Large portions are being added to CUSTOMER_BASKET capitalized. Not important but can be fixed to improve eye appeal.
 # [BUG/SEMI-FIXED] When portion/price changes through a button, button still remains on the screen. Problem fixed by calling main_menu() function but is not appealing to eye as it is flicks for a second to create the main menu.
+# [BUG/FIXED] Fixed a problem that was affecting change_price. Now it works with Double data type numbers.
+# [BUG/FIXED] Fixed a problem that causing remove_product_from_basket and find_product_price functions not working.
 # [DONE] ADD FOOD NAME TO RADIOBUTTON CHILD WINDOW -> Please choose a food portion: {FOOD NAME}
 # [DONE] Using food's name, match the name with PRODUCT_LIST-> get index of the food and use that index to get food's portion prices.
 # [DONE] Now it calculates the price based on quantity.
@@ -26,12 +28,20 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [DONE] All discount percentages has been added.
 # [WIP] Add payment page button(only by card)
 
-""" [BUG] Change price updates price labels but not treeview <- problem occurs because treeview get price information directly from PRICE_LIST TUPLE via find_product_price() function. 
+""" [BUG/FIXED] Change price updates price labels but not treeview <- problem occurs because treeview get price information directly from PRICE_LIST TUPLE via find_product_price() function. 
 Solution 1: Get treeview price from CUSTOMER_BASKET_PRICE or ask customer to how many price changes they'd like to do. Based on user input remove 'userinput' amount from both treeview 
 and CUSTOMER_BASKET, CUSTOMER_BASKET_SIZE, CUSTOMER_BASKET_PRICE then add it back with new price + {name_of_the_product} + 'Price changed' """
 
-PRODUCT_LIST = ["Lamb Kebab Wrap", "Lahmacun", "Cag Kebab", "Iskender", "Ezogelin", "Kisir", "Mercimek Kofte", "Sarma"]
-PRICE_LIST = [(10.99,  15.99), (3.99, 5.99), (18.99, 25.99), (16.99, 22.99), (7.99, 9.99), (5.49, 6.85), (8.45, 9.99), (7.58, 9.45)]
+PRODUCT_LIST = ["Lamb Kebab Wrap", "Lahmacun", "Cag Kebab", "Iskender", "Ezogelin", "Kisir", "Mercimek Kofte", "Sarma", "Coca Cola", "Soda", "Apple Juice", "Orange Juice", "Tango", "Ayran", "Ice Tea", "Root Beer"
+                "Cosmopolitan", "Margarita", "Martini", "Mojito", "Moscow Mule", "Negroni", "Old Fashioned", "Whiskey Sour", "Chicken Nuggets", "Easy Salmon Curry", "Air-fryer Jacket Potatoes", "Chicken Pasta Bite",
+                "Homemade Fish Fingers", "Creamy Chicken Stew", "Swedish Meatball Burgers", "Healthy Beef Stew with Veggies Mash", "Daiquiri", "Mimosa", "Pina Colada", "Punch", "Sangria", "Shirley Temple",
+                "Virgin Margarita", "Mojito", "Latte", "Cortado", "Espresso", "Flat Black", "Flat White", "Mocha", "Americano", "Cappucino"]
+PRICE_LIST = [(10.99,  15.99), (3.99, 5.99), (18.99, 25.99), (16.99, 22.99), (7.99, 9.99), (5.49, 6.85), (8.45, 9.99), (7.58, 9.45),
+              (2.99, 3.99), (2.55, 3.67), (2.99, 3.99), (3.87, 7.80), (1.99, 2.99), (0.99, 1.99), (3.99, 5.99), (3.99, 5.99),
+              (8.99, 10.99), (9.99, 12.99), (10.99, 15.99), (7.99, 10.99), (8.45, 11.45), (9.50, 10.50), (10.50, 12.50), (8.99, 11.99),
+              (4.99, 6.99), (5.99, 7.99), (3.99, 5.99), (5.49, 7.49), (4.99, 6.99), (6.49, 8.49), (5.99, 7.99), (5.99, 8.99),
+              (8.99, 10.99), (9.99, 11.99), (10.99, 11.99), (7.99, 9.99), (8.45, 10.45), (9.50, 10.50), (7.99, 10.99),
+              (3.99, 4.50), (2.99, 3.50), (1.99, 2.80), (2.49, 3.50), (3.49, 4.30), (3.99, 5.25), (2.99, 5.25), (2.99, 5.25)]
 CUSTOMER_BASKET = []
 CUSTOMER_BASKET_PRICE = []
 CUSTOMER_BASKET_PRODUCT_SIZE = []
@@ -42,7 +52,11 @@ test_tuple = []
 print(CUSTOMER_BASKET_PRICE)
 def find_product_price(product_name, product_size):
     get_product_index = find_index_of_product(product_name)
-
+    string_check = "CHANGED PRICE"
+    if string_check in product_name:
+        product_name = product_name.replace("CHANGED PRICE","", 1)
+        get_product_index = find_index_of_product(product_name)
+        return CUSTOMER_BASKET_PRICE[get_product_index]
     if product_size == 'S':
         return PRICE_LIST[get_product_index][0]
     return PRICE_LIST[get_product_index][1]
@@ -71,6 +85,7 @@ def remove_product():
     for selected_item in customer_basket_treeview.selection():
         item = customer_basket_treeview.item(selected_item)
         customer_basket_treeview.delete(selected_item)
+        print(f"Selected : {selected_item}, item= {item}")
         get_selected_product_info = item['values']
         remove_product_from_basket(get_selected_product_info[0], get_selected_product_info[1])
 
@@ -91,17 +106,21 @@ def set_quantity(spinbox_quantity, product_name, product_size, product_price):
     main_menu()
 def change_price(new_product_price, product_name, product_size):
     index_of_product = find_index_of_product(product_name)
+
     if new_product_price == CUSTOMER_BASKET_PRICE[index_of_product]:
         showerror("Error", "New and old price can not be same!")
-        treeview_print_to_screen()
-        basket_total_information()
-        destroy_child_window()
     else:
-        CUSTOMER_BASKET_PRICE[index_of_product] = new_product_price
-        treeview_print_to_screen()
-        basket_total_information()
-        destroy_child_window()
-    print(CUSTOMER_BASKET_PRICE)
+        for name_test,price_test  in zip(CUSTOMER_BASKET, CUSTOMER_BASKET_PRICE):
+            if name_test == product_name:
+                CUSTOMER_BASKET.remove(name_test)
+                CUSTOMER_BASKET_PRICE.remove(CUSTOMER_BASKET_PRICE[index_of_product])
+                CUSTOMER_BASKET_PRODUCT_SIZE.remove(product_size)
+                CUSTOMER_BASKET.append(f"{product_name} CHANGED PRICE")
+                CUSTOMER_BASKET_PRICE.append(new_product_price)
+                CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
+    basket_total_information()
+    destroy_child_window()
+    treeview_print_to_screen()
 
 
 def get_input_from_user_to_adjust_price():
@@ -126,7 +145,7 @@ def get_input_from_user_to_adjust_price():
         isChildWindowOpen = True
         child_window.resizable(False, False)
         set_price_label = tk.Label(child_window, text="Please set new price").pack()
-        price_var = tk.IntVar()
+        price_var = tk.DoubleVar()
         get_price_entry = tk.Entry(child_window, textvariable=price_var).pack()
         get_price_button = tk.Button(child_window, text="Set new price", command=lambda: [change_price(price_var.get(), get_product_info[0], get_product_info[1])]).pack()
         print(price_var.get())
@@ -182,7 +201,7 @@ def remove_product_from_basket(product_name, product_size):
     basket_total_information()
 def treeview_product_selected(event):
     #x=840, y=40, height=650, width=825
-    remove_product_from_basket = tk.Button(button_section_frame, text="REMOVE ITEM", bg='red', fg='white', command=lambda: [remove_product(), remove_product_from_basket.destroy()], font=("Helvetica,40"))
+    remove_product_from_basket = tk.Button(button_section_frame, text="REMOVE ITEM", bg='red', fg='white', command=remove_product, font=("Helvetica,40"))
     remove_product_from_basket.place(x=840, y=700, width=400, height=200)
     global change_product_quantity
     change_product_quantity = tk.Button(button_section_frame, text="CHANGE QUANTITY", bg='blue', fg='white', font=("Helvetica", 15), command=get_product_information_to_adjust_quantity)
@@ -244,9 +263,9 @@ def treeview_print_to_screen():
         if product_name_treeview not in treeview_seen:
             get_product_price = find_product_price(product_name_treeview, CUSTOMER_BASKET_PRODUCT_SIZE[loop_counter])
             count = CUSTOMER_BASKET.count(product_name_treeview)
-            treeview_tuple.append((CUSTOMER_BASKET[loop_counter], CUSTOMER_BASKET_PRODUCT_SIZE[loop_counter], count, f'{round(get_product_price*count,2)}£'))
+            treeview_tuple.append((CUSTOMER_BASKET[loop_counter], CUSTOMER_BASKET_PRODUCT_SIZE[loop_counter], count, f'{round(CUSTOMER_BASKET_PRICE[loop_counter]*count,2)}£'))
             treeview_seen.add(product_name_treeview)
-    treeview_tuple.append(("Lamb Kebab", "S", 1,'4£'))
+#    treeview_tuple.append(("Lamb Kebab", "S", 1,'4£')) # Test
     for add_to_treview in treeview_tuple:
         customer_basket_treeview.insert('', tk.END, values=add_to_treview)
 def treeview_create_customer_basket():
@@ -403,7 +422,7 @@ def print_items_in_drink_menu():
     # Create a button and add image -> Cola
     drink_button_cola_image = tk.PhotoImage(file="images/drinks/drinks_cola.png")
     drink_button_cola_image_to_display = drink_button_cola_image.subsample(x=4, y=4)
-    drink_button_cola = tk.Button(drink_frame, image=drink_button_cola_image_to_display)
+    drink_button_cola = tk.Button(drink_frame, image=drink_button_cola_image_to_display, command=lambda: get_portion("Coca Cola"))
     drink_button_cola.image = drink_button_cola_image_to_display
     drink_button_cola.place(x=40, y=5,width=200, height=200)
     # Cola information
@@ -413,7 +432,7 @@ def print_items_in_drink_menu():
     # Create a button and add image -> Soda
     drink_button_soda_image = tk.PhotoImage(file="images/drinks/drinks_soda.png")
     drink_button_soda_image_to_display = drink_button_soda_image.subsample(x=4, y=4)
-    drink_button_soda = tk.Button(drink_frame, image=drink_button_soda_image_to_display)
+    drink_button_soda = tk.Button(drink_frame, image=drink_button_soda_image_to_display, command=lambda: get_portion("Soda"))
     drink_button_soda.image = drink_button_soda_image_to_display
     drink_button_soda.place(x=330, y=5,width=200, height=200)
     # Soda information
@@ -422,7 +441,7 @@ def print_items_in_drink_menu():
     # Create a button and add image -> Apple Juice
     drink_button_applejuice_image = tk.PhotoImage(file="images/drinks/drinks_apple_juice.png")
     drink_button_applejuice_image_to_display = drink_button_applejuice_image.subsample(x=4, y=4)
-    drink_button_applejuice = tk.Button(drink_frame, image=drink_button_applejuice_image_to_display)
+    drink_button_applejuice = tk.Button(drink_frame, image=drink_button_applejuice_image_to_display, command=lambda: get_portion("Apple Juice"))
     drink_button_applejuice.image = drink_button_applejuice_image_to_display
     drink_button_applejuice.place(x=620, y=5,width=200, height=200)
     # Apple Juice information
@@ -431,7 +450,7 @@ def print_items_in_drink_menu():
     # Create a button and add image -> Orange Juice
     drink_button_orangejuice_image = tk.PhotoImage(file="images/drinks/drinks_orange_juice.png")
     drink_button_orangejuice_image_to_display = drink_button_orangejuice_image.subsample(x=4, y=4)
-    drink_button_orangejuice = tk.Button(drink_frame, image=drink_button_orangejuice_image_to_display)
+    drink_button_orangejuice = tk.Button(drink_frame, image=drink_button_orangejuice_image_to_display, command=lambda: get_portion("Orange Juice"))
     drink_button_orangejuice.image = drink_button_orangejuice_image_to_display
     drink_button_orangejuice.place(x=910, y=5,width=200, height=200)
     # Orange Juice information
@@ -440,7 +459,7 @@ def print_items_in_drink_menu():
     # Create a button and add image -> Tango
     drink_button_tango_image = tk.PhotoImage(file="images/drinks/drinks_tango.png")
     drink_button_tango_image_to_display = drink_button_tango_image.subsample(x=4, y=4)
-    drink_button_tango = tk.Button(drink_frame, image=drink_button_tango_image_to_display)
+    drink_button_tango = tk.Button(drink_frame, image=drink_button_tango_image_to_display, command=lambda: get_portion("Tango"))
     drink_button_tango.image = drink_button_tango_image_to_display
     drink_button_tango.place(x=40, y=300,width=200, height=200)
     # Tango information
@@ -449,7 +468,7 @@ def print_items_in_drink_menu():
     # Create a button and add image -> Ayran
     drink_button_ayran_image = tk.PhotoImage(file="images/drinks/drinks_ayran.png")
     drink_button_ayran_image_to_display = drink_button_ayran_image.subsample(x=4, y=4)
-    drink_button_ayran = tk.Button(drink_frame, image=drink_button_ayran_image_to_display)
+    drink_button_ayran = tk.Button(drink_frame, image=drink_button_ayran_image_to_display, command=lambda: get_portion("Ayran"))
     drink_button_ayran.image = drink_button_ayran_image_to_display
     drink_button_ayran.place(x=330, y=300,width=200, height=200)
     # Ayran information
@@ -458,7 +477,7 @@ def print_items_in_drink_menu():
     # Create a button and add image -> Ice Tea
     drink_button_iced_tea_image = tk.PhotoImage(file="images/drinks/drinks_iced_tea.png")
     drink_button_iced_tea_image_to_display = drink_button_iced_tea_image.subsample(x=4, y=4)
-    drink_button_iced_tea = tk.Button(drink_frame, image=drink_button_iced_tea_image_to_display)
+    drink_button_iced_tea = tk.Button(drink_frame, image=drink_button_iced_tea_image_to_display, command=lambda: get_portion("Iced Tea"))
     drink_button_iced_tea.image = drink_button_iced_tea_image_to_display
     drink_button_iced_tea.place(x=620, y=300,width=200, height=200)
     # Ice Tea information
@@ -467,7 +486,7 @@ def print_items_in_drink_menu():
     # Create a button and add image -> Root Beer
     drink_button_root_beer_image = tk.PhotoImage(file="images/drinks/drinks_root_beer.png")
     drink_button_root_beer_image_to_display = drink_button_root_beer_image.subsample(x=4, y=4)
-    drink_button_root_beer = tk.Button(drink_frame, image=drink_button_root_beer_image_to_display)
+    drink_button_root_beer = tk.Button(drink_frame, image=drink_button_root_beer_image_to_display, command=lambda: get_portion("Root Beer"))
     drink_button_root_beer.image = drink_button_root_beer_image_to_display
     drink_button_root_beer.place(x=910, y=300,width=200, height=200)
     # Root Beer information
@@ -487,7 +506,7 @@ def print_items_in_cocktail_menu():
 
     # Create a button and add cocktail_cosmopolitan.png
     cosmopolitan_image = tk.PhotoImage(file="images/cocktails/cocktail_cosmopolitan.png").subsample(x=4,y=4)
-    cosmopolitan_button = tk.Button(cocktail_frame, image=cosmopolitan_image)
+    cosmopolitan_button = tk.Button(cocktail_frame, image=cosmopolitan_image, command=lambda: get_portion("Cosmopolitan"))
     cosmopolitan_button.image = cosmopolitan_image
     cosmopolitan_button.place(x=40, y=5, width=200, height=200)
 
@@ -497,7 +516,7 @@ def print_items_in_cocktail_menu():
 
     # Create a button and add cocktail_margarita.png
     margarita_image = tk.PhotoImage(file="images/cocktails/cocktail_margarita.png").subsample(x=4,y=4)
-    margarita_button = tk.Button(cocktail_frame, image=margarita_image)
+    margarita_button = tk.Button(cocktail_frame, image=margarita_image, command=lambda: get_portion("Margarita"))
     margarita_button.image = margarita_image
     margarita_button.place(x=315, y=5, width=200, height=200)
 
@@ -507,7 +526,7 @@ def print_items_in_cocktail_menu():
 
     # Create a button and add cocktail_martini.png
     martini_image = tk.PhotoImage(file="images/cocktails/cocktail_martini.png").subsample(x=4,y=4)
-    martini_button = tk.Button(cocktail_frame, image=martini_image)
+    martini_button = tk.Button(cocktail_frame, image=martini_image, command=lambda: get_portion("Martini"))
     martini_button.image = martini_image
     martini_button.place(x=610, y=5, width=200, height=200)
 
@@ -517,7 +536,7 @@ def print_items_in_cocktail_menu():
 
     # Create a button and add cocktail_mojito.png
     mojito_image = tk.PhotoImage(file="images/cocktails/cocktail_mojito.png").subsample(x=4,y=4)
-    mojito_button = tk.Button(cocktail_frame, image=mojito_image)
+    mojito_button = tk.Button(cocktail_frame, image=mojito_image, command=lambda: get_portion("Mojito"))
     mojito_button.image = mojito_image
     mojito_button.place(x=895, y=5, width=200, height=200)
 
@@ -527,7 +546,7 @@ def print_items_in_cocktail_menu():
 
     # Create a button and add cocktail_moscowmule.png
     moscowmule_image = tk.PhotoImage(file="images/cocktails/cocktail_moscowmule.png").subsample(x=4,y=4)
-    moscowmule_button = tk.Button(cocktail_frame, image=moscowmule_image)
+    moscowmule_button = tk.Button(cocktail_frame, image=moscowmule_image, command=lambda: get_portion("Moscow Mule"))
     moscowmule_button.image = moscowmule_image
     moscowmule_button.place(x=40, y=300, width=200, height=200)
 
@@ -577,7 +596,7 @@ def print_items_in_mocktail_menu():
 
     # Create a button and add mocktail_daiquiri.png
     daiquiri_image = tk.PhotoImage(file="images/mocktails/mocktail_daiquiri.png").subsample(x=4, y=4)
-    daiquiri_button = tk.Button(mocktail_frame, image=daiquiri_image)
+    daiquiri_button = tk.Button(mocktail_frame, image=daiquiri_image, command=lambda: get_portion("Daiquiri"))
     daiquiri_button.image = daiquiri_image
     daiquiri_button.place(x=40, y=5, width=200, height=200)
 
@@ -587,7 +606,7 @@ def print_items_in_mocktail_menu():
 
     # Create a button and add mocktail_mimosa.png
     mimosa_image = tk.PhotoImage(file="images/mocktails/mocktail_mimosa.png").subsample(x=4, y=4)
-    mimosa_button = tk.Button(mocktail_frame, image=mimosa_image)
+    mimosa_button = tk.Button(mocktail_frame, image=mimosa_image, command=lambda: get_portion("Mimosa"))
     mimosa_button.image = mimosa_image
     mimosa_button.place(x=315, y=5, width=200, height=200)
 
@@ -597,7 +616,7 @@ def print_items_in_mocktail_menu():
 
     # Create a button and add mocktail_pinacolada.png
     pinacolada_image = tk.PhotoImage(file="images/mocktails/mocktail_pinacolada.png").subsample(x=4, y=4)
-    pinacolada_button = tk.Button(mocktail_frame, image=pinacolada_image)
+    pinacolada_button = tk.Button(mocktail_frame, image=pinacolada_image, command=lambda: get_portion("Pina Colada"))
     pinacolada_button.image = pinacolada_image
     pinacolada_button.place(x=610, y=5, width=200, height=200)
 
@@ -617,7 +636,7 @@ def print_items_in_mocktail_menu():
 
     # Create a button and add mocktail_sangria.png
     sangria_image = tk.PhotoImage(file="images/mocktails/mocktail_sangria.png").subsample(x=4, y=4)
-    sangria_button = tk.Button(mocktail_frame, image=sangria_image)
+    sangria_button = tk.Button(mocktail_frame, image=sangria_image, command=lambda: get_portion("Sangria"))
     sangria_button.image = sangria_image
     sangria_button.place(x=40, y=300, width=200, height=200)
 
@@ -627,7 +646,7 @@ def print_items_in_mocktail_menu():
 
     # Create a button and add mocktail_shirlytemple.png
     shirlytemple_image = tk.PhotoImage(file="images/mocktails/mocktail_shirlytemple.png").subsample(x=4, y=4)
-    shirlytemple_button = tk.Button(mocktail_frame, image=shirlytemple_image)
+    shirlytemple_button = tk.Button(mocktail_frame, image=shirlytemple_image, command=lambda: get_portion("Shirly Temple"))
     shirlytemple_button.image = shirlytemple_image
     shirlytemple_button.place(x=315, y=300, width=200, height=200)
 
@@ -637,7 +656,7 @@ def print_items_in_mocktail_menu():
 
     # Create a button and add mocktail_virginmargarita.png
     virginmargarita_image = tk.PhotoImage(file="images/mocktails/mocktail_virginmargarita.png").subsample(x=4, y=4)
-    virginmargarita_button = tk.Button(mocktail_frame, image=virginmargarita_image)
+    virginmargarita_button = tk.Button(mocktail_frame, image=virginmargarita_image, command=lambda: get_portion("Virgin Margarita"))
     virginmargarita_button.image = virginmargarita_image
     virginmargarita_button.place(x=610, y=300, width=200, height=200)
 
@@ -647,7 +666,7 @@ def print_items_in_mocktail_menu():
 
     # Create a button and add mocktail_mojito.png
     mojito_image = tk.PhotoImage(file="images/mocktails/mocktail_virginmojito.png").subsample(x=4, y=4)
-    mojito_button = tk.Button(mocktail_frame, image=mojito_image)
+    mojito_button = tk.Button(mocktail_frame, image=mojito_image, command=lambda: get_portion("Mojito"))
     mojito_button.image = mojito_image
     mojito_button.place(x=895, y=300, width=200, height=200)
 
@@ -667,7 +686,7 @@ def print_items_in_kids_menu():
 
     # Create a button and add kids_nuggets.png
     kids_nuggets_image = tk.PhotoImage(file="images/kids_menu/kids_nuggets.png").subsample(x=4, y=4)
-    nuggets_button = tk.Button(kids_menu_frame, image=kids_nuggets_image)
+    nuggets_button = tk.Button(kids_menu_frame, image=kids_nuggets_image, command=lambda: get_portion("Chicken Nuggets"))
     nuggets_button.image = kids_nuggets_image
     nuggets_button.place(x=40, y=5, width=200, height=200)
 
@@ -677,7 +696,7 @@ def print_items_in_kids_menu():
 
     # Create a button and add kids_salmon.png
     kids_salmon_image = tk.PhotoImage(file="images/kids_menu/kids_salmon.png").subsample(x=4, y=4)
-    salmon_button = tk.Button(kids_menu_frame, image=kids_salmon_image)
+    salmon_button = tk.Button(kids_menu_frame, image=kids_salmon_image, command=lambda: get_portion("Easy Salmon Curry"))
     salmon_button.image = kids_salmon_image
     salmon_button.place(x=315, y=5, width=200, height=200)
 
@@ -687,7 +706,7 @@ def print_items_in_kids_menu():
 
     # Create a button and add kids_potatoes.png
     kids_potatoes_image = tk.PhotoImage(file="images/kids_menu/kids_potatoes.png").subsample(x=4, y=4)
-    potatoes_button = tk.Button(kids_menu_frame, image=kids_potatoes_image)
+    potatoes_button = tk.Button(kids_menu_frame, image=kids_potatoes_image , command=lambda: get_portion("Air-fryer Jacket Potatoes"))
     potatoes_button.image = kids_potatoes_image
     potatoes_button.place(x=610, y=5, width=200, height=200)
 
@@ -697,7 +716,7 @@ def print_items_in_kids_menu():
 
     # Create a button and add kids_pasta.png
     kids_pasta_image = tk.PhotoImage(file="images/kids_menu/kids_pasta.png").subsample(x=4, y=4)
-    pasta_button = tk.Button(kids_menu_frame, image=kids_pasta_image)
+    pasta_button = tk.Button(kids_menu_frame, image=kids_pasta_image, command=lambda: get_portion("Chicken Pasta Bake"))
     pasta_button.image = kids_pasta_image
     pasta_button.place(x=895, y=5, width=200, height=200)
 
@@ -707,7 +726,7 @@ def print_items_in_kids_menu():
 
     # Create a button and add kids_finger.png
     kids_finger_image = tk.PhotoImage(file="images/kids_menu/kids_finger.png").subsample(x=4, y=4)
-    finger_button = tk.Button(kids_menu_frame, image=kids_finger_image)
+    finger_button = tk.Button(kids_menu_frame, image=kids_finger_image, command=lambda: get_portion("Homemade Fish Fingers"))
     finger_button.image = kids_finger_image
     finger_button.place(x=40, y=300, width=200, height=200)
 
@@ -717,7 +736,7 @@ def print_items_in_kids_menu():
 
     # Create a button and add kids_chickenstew.png
     kids_chickenstew_image = tk.PhotoImage(file="images/kids_menu/kids_chickenstew.png").subsample(x=4, y=4)
-    chickenstew_button = tk.Button(kids_menu_frame, image=kids_chickenstew_image)
+    chickenstew_button = tk.Button(kids_menu_frame, image=kids_chickenstew_image, command=lambda: get_portion("Creamy Chicken Stew"))
     chickenstew_button.image = kids_chickenstew_image
     chickenstew_button.place(x=315, y=300, width=200, height=200)
 
@@ -727,7 +746,7 @@ def print_items_in_kids_menu():
 
     # Create a button and add kids_burger.png
     kids_burger_image = tk.PhotoImage(file="images/kids_menu/kids_burger.png").subsample(x=4, y=4)
-    burger_button = tk.Button(kids_menu_frame, image=kids_burger_image)
+    burger_button = tk.Button(kids_menu_frame, image=kids_burger_image, command=lambda: get_portion("Swedish Meatball Burgers"))
     burger_button.image = kids_burger_image
     burger_button.place(x=610, y=300, width=200, height=200)
 
@@ -737,7 +756,7 @@ def print_items_in_kids_menu():
 
     # Create a button and add kids_burger.png
     kids_beefstew_image = tk.PhotoImage(file="images/kids_menu/kids_beefstew.png").subsample(x=4, y=4)
-    beefstew_button = tk.Button(kids_menu_frame, image=kids_beefstew_image)
+    beefstew_button = tk.Button(kids_menu_frame, image=kids_beefstew_image, command=lambda: get_portion("Healthy Beef Stew with Veggie Mash"))
     beefstew_button.image = kids_beefstew_image
     beefstew_button.place(x=895, y=300, width=200, height=200)
 
@@ -757,7 +776,7 @@ def print_items_in_coffee_menu():
 
     # Create a button and add coffee_latte.png
     coffee_latte_image = tk.PhotoImage(file="images/coffee_menu/coffee_latte.png").subsample(x=4, y=4)
-    latte_button = tk.Button(coffee_menu_frame, image=coffee_latte_image)
+    latte_button = tk.Button(coffee_menu_frame, image=coffee_latte_image, command=lambda: get_portion("Latte"))
     latte_button.image = coffee_latte_image
     latte_button.place(x=40, y=5, width=200, height=200)
 
@@ -767,7 +786,7 @@ def print_items_in_coffee_menu():
 
     # Create a button and add coffee_cortado.png
     coffee_cortado_image = tk.PhotoImage(file="images/coffee_menu/coffee_cortado.png").subsample(x=4, y=4)
-    cortado_button = tk.Button(coffee_menu_frame, image=coffee_cortado_image)
+    cortado_button = tk.Button(coffee_menu_frame, image=coffee_cortado_image, command=lambda: get_portion("Cortado"))
     cortado_button.image = coffee_cortado_image
     cortado_button.place(x=315, y=5, width=200, height=200)
 
@@ -777,7 +796,7 @@ def print_items_in_coffee_menu():
 
     # Create a button and add coffee_espresso.png
     coffee_espresso_image = tk.PhotoImage(file="images/coffee_menu/coffee_espresso.png").subsample(x=4, y=4)
-    espresso_button = tk.Button(coffee_menu_frame, image=coffee_espresso_image)
+    espresso_button = tk.Button(coffee_menu_frame, image=coffee_espresso_image, command=lambda: get_portion("Espresso"))
     espresso_button.image = coffee_espresso_image
     espresso_button.place(x=610, y=5, width=200, height=200)
 
@@ -787,7 +806,7 @@ def print_items_in_coffee_menu():
 
     # Create a button and add coffee_flatblack.png
     coffee_flatblack_image = tk.PhotoImage(file="images/coffee_menu/coffee_flatblack.png").subsample(x=4, y=4)
-    flatblack_button = tk.Button(coffee_menu_frame, image=coffee_flatblack_image)
+    flatblack_button = tk.Button(coffee_menu_frame, image=coffee_flatblack_image, command=lambda: get_portion("Flat Black"))
     flatblack_button.image = coffee_flatblack_image
     flatblack_button.place(x=895, y=5, width=200, height=200)
 
@@ -797,7 +816,7 @@ def print_items_in_coffee_menu():
 
     # Create a button and add coffee_flatwhite.png (second time if needed)
     coffee_flatwhite_image = tk.PhotoImage(file="images/coffee_menu/coffee_flatwhite.png").subsample(x=4, y=4)
-    flatwhite_button = tk.Button(coffee_menu_frame, image=coffee_flatwhite_image)
+    flatwhite_button = tk.Button(coffee_menu_frame, image=coffee_flatwhite_image, command=lambda: get_portion("Flat White"))
     flatwhite_button.image = coffee_flatwhite_image
     flatwhite_button.place(x=40, y=300, width=200, height=200)
 
@@ -807,7 +826,7 @@ def print_items_in_coffee_menu():
 
     # Create a button and add coffee_mocha.png
     coffee_mocha_image = tk.PhotoImage(file="images/coffee_menu/coffee_mocha.png").subsample(x=4, y=4)
-    mocha_button = tk.Button(coffee_menu_frame, image=coffee_mocha_image)
+    mocha_button = tk.Button(coffee_menu_frame, image=coffee_mocha_image, command=lambda: get_portion("Mocha"))
     mocha_button.image = coffee_mocha_image
     mocha_button.place(x=315, y=300, width=200, height=200)
 
@@ -817,7 +836,7 @@ def print_items_in_coffee_menu():
 
     # Create a button and add coffee_americano.png
     coffee_americano_image = tk.PhotoImage(file="images/coffee_menu/coffee_americano.png").subsample(x=4, y=4)
-    americano_button = tk.Button(coffee_menu_frame, image=coffee_americano_image)
+    americano_button = tk.Button(coffee_menu_frame, image=coffee_americano_image, command=lambda: get_portion("Americano"))
     americano_button.image = coffee_americano_image
     americano_button.place(x=610, y=300, width=200, height=200)
 
@@ -827,7 +846,7 @@ def print_items_in_coffee_menu():
 
     coffee_cappucino_image = tk.PhotoImage(file="images/coffee_menu/coffee_cappucino.png").subsample(x=4, y=4)
     # Create a button and add coffee_americano.png
-    cappucino_button = tk.Button(coffee_menu_frame, image=coffee_cappucino_image)
+    cappucino_button = tk.Button(coffee_menu_frame, image=coffee_cappucino_image, command=lambda: get_portion("Cappucino"))
     cappucino_button.image = coffee_cappucino_image
     cappucino_button.place(x=895, y=300, width=200, height=200)
 
@@ -895,13 +914,25 @@ def create_payment_screen():
     # Get screen width and height. Set width and height for child_window
     screen_width = payment_window.winfo_screenwidth()
     screen_height = payment_window.winfo_screenheight()
-    window_width = 400
-    window_height = 180
+    window_width = 650
+    window_height = 470
     # Find center of the screen
     center_x = int(screen_width / 2 - window_width / 2)
     center_y = int(screen_height / 2 - window_height / 2)
     payment_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-
+    payment_image = tk.PhotoImage(file= "images/other/payment_card_image.png")
+    payment_label = tk.Label(payment_window, image=payment_image).pack()
+    payment_check_input = tk.Button(payment_window, text="CHECK INFO", font=("Helvetica",25))
+    payment_check_input.place(x=00, y=420, width=650, height=47)
+    card_16_digit_number_intvar = tk.IntVar()
+    card_16_digit_text_box = tk.Entry(payment_window, textvariable=card_16_digit_number_intvar, font=("Helvetica",30))
+    card_16_digit_text_box.place(x=155, y=225, width=400, height=50)
+    card_cardholder_fname_lname_stringvar = tk.StringVar()
+    card_cardholder_fname_lname = tk.Entry(payment_window, textvariable=card_cardholder_fname_lname_stringvar, font=("Helvetica",30))
+    card_cardholder_fname_lname.place(x=25, y=325, width=375, height=55)
+    card_validuntil_intvar = tk.IntVar()
+    card_validuntil_entry = tk.Entry(payment_window, textvariable=card_validuntil_intvar, font=("Helvetica", 30))
+    card_validuntil_entry.place(x=465, y=295, width=150, height=60)
 
     payment_window.mainloop()
 def go_back_to_main_menu():
