@@ -6,12 +6,12 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 
 # [BUG/FIXED] Make "Remove from basket" button disappear after an item is unselected on treeview.
 # [BUG/FIXED] creates multiple child_window(s) when button pressed more than once. Find a way to check whether a child window is open or not.
-# [BUG/FIXED] When you insert same food it doesnt increase the quantity but makes a new entry and increases the quantity by 1
+# [BUG/FIXED] When you insert same food it doesn't increase the quantity but makes a new entry and increases the quantity by 1
 # [BUG/FIXED] ValueError: 'LAMB KEBAB WRAP' is not in list// check append_product function
 # [BUG/FIXED] If customer dont choose a size, it automatically adds LARGE portion name and price but not product size.
 # [BUG/FIXED] Portion window not opening after closing. You have to restart the whole application in order to make it work.
 # [BUG/FIXED] Now adjust quantity can increase or decrease quantity of the product.
-# [TEMP FIXED] App only works on wide screen. Find a way to fit it into smaller screens <- temporaraly fixed, now it ask user to set their resolution 1920x1080 or higher
+# [TEMP FIXED] App only works on wide screen. Find a way to fit it into smaller screens <- temporarily fixed, now it ask user to set their resolution 1920x1080 or higher
 # [BUG/SEMI-FIXED] Large portions are being added to CUSTOMER_BASKET capitalized. Not important but can be fixed to improve eye appeal.
 # [BUG/SEMI-FIXED] When portion/price changes through a button, button still remains on the screen. Problem fixed by calling main_menu() function but is not appealing to eye as it is flicks for a second to create the main menu.
 # [BUG/FIXED] Fixed a problem that was affecting change_price. Now it works with Double data type numbers.
@@ -54,164 +54,8 @@ treeview_tuple = []
 treeview_seen = set()
 test_tuple = []
 print(CUSTOMER_BASKET_PRICE)
-def find_product_price(product_name, product_size):
-    get_product_index = find_index_of_product(product_name)
-    string_check = "CHANGED PRICE"
-    if string_check in product_name:
-        product_name = product_name.replace("CHANGED PRICE","", 1)
-        get_product_index = find_index_of_product(product_name)
-        return CUSTOMER_BASKET_PRICE[get_product_index]
-    if product_size == 'S':
-        return PRICE_LIST[get_product_index][0]
-    return PRICE_LIST[get_product_index][1]
-def find_index_of_product(product_name):
-    get_product_index = 0
-    for i in range(0,len(PRODUCT_LIST)):
-        if product_name.lower() in PRODUCT_LIST[i].lower():
-            get_product_index = i
-    return get_product_index
-def append_product(product_name, product_size):
-    food_index = find_index_of_product(product_name)
-    print(f"index {food_index}")
-    if product_size == 'S':
-        CUSTOMER_BASKET.append(product_name)
-        CUSTOMER_BASKET_PRICE.append(PRICE_LIST[food_index][0])
-        CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
-    else:
-        product_name_capitalized = product_name.upper()
-        CUSTOMER_BASKET.append(product_name_capitalized)
-        CUSTOMER_BASKET_PRICE.append(PRICE_LIST[food_index][1])
-        CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
-    showinfo(title="Choice", message=f"'{product_name}' has been added to your basket")
-    destroy_child_window()
-def remove_product():
-    for selected_item in customer_basket_treeview.selection():
-        item = customer_basket_treeview.item(selected_item)
-        customer_basket_treeview.delete(selected_item)
-        get_selected_product_info = item['values']
-        remove_product_from_basket(get_selected_product_info[0], get_selected_product_info[1])
-
-def set_quantity(spinbox_quantity, product_name, product_size, product_price):
-    if len(CUSTOMER_BASKET) >= 1:
-        for _ in range(len(CUSTOMER_BASKET)):
-            remove_product_from_basket(product_name, product_size)
-    print(f'Q before : {len(CUSTOMER_BASKET)}')
-    for i in range(spinbox_quantity):
-#        product_price = int(product_price)
-        CUSTOMER_BASKET.append(product_name)
-        CUSTOMER_BASKET_PRICE.append(find_product_price(product_name, product_size))
-        CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
-
-    treeview_print_to_screen()
-    basket_total_information()
-    destroy_child_window()
-    main_menu()
-def change_price(new_product_price, product_name, product_size):
-    index_of_product = find_index_of_product(product_name)
-
-    if new_product_price == CUSTOMER_BASKET_PRICE[index_of_product]:
-        showerror("Error", "New and old price can not be same!")
-    else:
-        for name_test,price_test  in zip(CUSTOMER_BASKET, CUSTOMER_BASKET_PRICE):
-            if name_test in product_name:
-                CUSTOMER_BASKET.remove(name_test)
-                CUSTOMER_BASKET_PRICE.remove(CUSTOMER_BASKET_PRICE[index_of_product])
-                CUSTOMER_BASKET_PRODUCT_SIZE.remove(product_size)
-                CUSTOMER_BASKET.append(f"{product_name} CHANGED PRICE")
-                CUSTOMER_BASKET_PRICE.append(new_product_price)
-                CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
-                break
-    basket_total_information()
-    destroy_child_window()
-    treeview_print_to_screen()
 
 
-def get_input_from_user_to_adjust_price():
-    global isChildWindowOpen
-    if not isChildWindowOpen:
-        for selected_item in customer_basket_treeview.selection():
-            item = customer_basket_treeview.item(selected_item)
-            print(item)
-            get_product_info = item['values']
-        global child_window
-        child_window = tk.Toplevel()
-        child_window.title("Portions")
-        # Get screen width and height. Set width and height for child_window
-        screen_width = child_window.winfo_screenwidth()
-        screen_height = child_window.winfo_screenheight()
-        window_width = 200
-        window_height = 100
-        # Find center of the screen
-        center_x = int(screen_width / 2 - window_width / 2)
-        center_y = int(screen_height / 2 - window_height / 2)
-        child_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-        isChildWindowOpen = True
-        child_window.resizable(False, False)
-        set_price_label = tk.Label(child_window, text="Please set new price").pack()
-        price_var = tk.DoubleVar()
-        get_price_entry = tk.Entry(child_window, textvariable=price_var).pack()
-        get_price_button = tk.Button(child_window, text="Set new price", command=lambda: [change_price(price_var.get(), get_product_info[0], get_product_info[1])]).pack()
-        print(price_var.get())
-
-        child_window.protocol('WM_DELETE_WINDOW', lambda: on_close_child_window())
-        child_window.mainloop()
-def get_product_information_to_adjust_quantity():
-    for selected_item in customer_basket_treeview.selection():
-        item = customer_basket_treeview.item(selected_item)
-        get_product_info = item['values']
-        global isChildWindowOpen
-        # Create a top-level window (child windows)
-        if not isChildWindowOpen:
-            global child_window
-            child_window = tk.Toplevel()
-            child_window.title("Portions")
-            # Get screen width and height. Set width and height for child_window
-            screen_width = child_window.winfo_screenwidth()
-            screen_height = child_window.winfo_screenheight()
-            window_width = 200
-            window_height = 100
-            # Find center of the screen
-            center_x = int(screen_width / 2 - window_width / 2)
-            center_y = int(screen_height / 2 - window_height / 2)
-            child_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-
-            isChildWindowOpen = True
-            child_window.resizable(False, False)
-            get_quantity_from_spinbox = tk.IntVar()
-            quantity_label = tk.Label(child_window, text="Please choose a quantity")
-            quantity_label.pack()
-            quantity_spinbox = tk.Spinbox(child_window,from_= 1, to=50, textvariable=get_quantity_from_spinbox,wrap=True)
-            quantity_spinbox.pack()
-            set_quantity_button = tk.Button(child_window, text="Set Quantity", command=lambda: (set_quantity(get_quantity_from_spinbox.get(), get_product_info[0], get_product_info[1], get_product_info[3]) , ))
-            set_quantity_button.pack()
-
-            child_window.protocol('WM_DELETE_WINDOW', lambda: on_close_child_window())
-            child_window.mainloop()
-def remove_product_from_basket(product_name, product_size):
-    get_index_of_product = 0
-    for i in range(len(CUSTOMER_BASKET)):
-        if product_name.lower() == CUSTOMER_BASKET[i].lower():
-            get_index_of_product = i
-    print(CUSTOMER_BASKET[get_index_of_product])
-    CUSTOMER_BASKET.remove(CUSTOMER_BASKET[get_index_of_product])
-    if product_size == 'S':
-        CUSTOMER_BASKET_PRODUCT_SIZE.remove('S')
-        CUSTOMER_BASKET_PRICE.remove(find_product_price(product_name, product_size))
-    else:
-        CUSTOMER_BASKET_PRODUCT_SIZE.remove('L')
-        CUSTOMER_BASKET_PRICE.remove(find_product_price(product_name, product_size))
-    treeview_print_to_screen()
-    basket_total_information()
-def treeview_product_selected(event):
-    #x=840, y=40, height=650, width=825
-    remove_product_from_basket = tk.Button(button_section_frame, text="REMOVE ITEM", bg='red', fg='white', command=remove_product, font=("Helvetica,40"))
-    remove_product_from_basket.place(x=840, y=700, width=400, height=200)
-    global change_product_quantity
-    change_product_quantity = tk.Button(button_section_frame, text="CHANGE QUANTITY", bg='orange', fg='white', font=("Helvetica", 15), command=get_product_information_to_adjust_quantity)
-    change_product_quantity.place(x=1680, y=265,width=200,height=200)
-    global change_product_price
-    change_product_price = tk.Button(button_section_frame, text="CHANGE PRICE", bg='grey', fg='white', font=("Helvetica", 15), command=get_input_from_user_to_adjust_price)
-    change_product_price.place(x=1680, y=489, width=200,height=200)
 def get_portion(product_name):
     global isChildWindowOpen
 
@@ -251,6 +95,216 @@ def get_portion(product_name):
         child_window.protocol('WM_DELETE_WINDOW', lambda: on_close_child_window())
         child_window.mainloop()
 
+
+def find_product_price(product_name, product_size):
+    get_product_index = find_index_of_product(product_name)
+    string_check = "CHANGED PRICE"
+    if string_check in product_name:
+        product_name = product_name.replace("CHANGED PRICE", "", 1)
+        get_product_index = find_index_of_product(product_name)
+        return CUSTOMER_BASKET_PRICE[get_product_index]
+    if product_size == 'S':
+        return PRICE_LIST[get_product_index][0]
+    return PRICE_LIST[get_product_index][1]
+
+
+def find_index_of_product(product_name):
+    get_product_index = 0
+    for i in range(0, len(PRODUCT_LIST)):
+        if product_name.lower() in PRODUCT_LIST[i].lower():
+            get_product_index = i
+    return get_product_index
+
+
+def append_product(product_name, product_size):
+    food_index = find_index_of_product(product_name)
+    print(f"index {food_index}")
+    if product_size == 'S':
+        CUSTOMER_BASKET.append(product_name)
+        CUSTOMER_BASKET_PRICE.append(PRICE_LIST[food_index][0])
+        CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
+    else:
+        product_name_capitalized = product_name.upper()
+        CUSTOMER_BASKET.append(product_name_capitalized)
+        CUSTOMER_BASKET_PRICE.append(PRICE_LIST[food_index][1])
+        CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
+    showinfo(title="Choice", message=f"'{product_name}' has been added to your basket")
+    destroy_child_window()
+
+
+def remove_product():
+    for selected_item in customer_basket_treeview.selection():
+        item = customer_basket_treeview.item(selected_item)
+        customer_basket_treeview.delete(selected_item)
+        get_selected_product_info = item['values']
+        remove_product_from_basket(get_selected_product_info[0], get_selected_product_info[1])
+
+
+def remove_product_from_basket(product_name, product_size):
+    get_index_of_product = 0
+    for i in range(len(CUSTOMER_BASKET)):
+        if product_name.lower() == CUSTOMER_BASKET[i].lower():
+            get_index_of_product = i
+    print(CUSTOMER_BASKET[get_index_of_product])
+    CUSTOMER_BASKET.remove(CUSTOMER_BASKET[get_index_of_product])
+    if product_size == 'S':
+        CUSTOMER_BASKET_PRODUCT_SIZE.remove('S')
+        CUSTOMER_BASKET_PRICE.remove(find_product_price(product_name, product_size))
+    else:
+        CUSTOMER_BASKET_PRODUCT_SIZE.remove('L')
+        CUSTOMER_BASKET_PRICE.remove(find_product_price(product_name, product_size))
+    treeview_print_to_screen()
+    basket_total_information()
+
+
+def set_quantity(spinbox_quantity, product_name, product_size, product_price):
+    if len(CUSTOMER_BASKET) >= 1:
+        for _ in range(len(CUSTOMER_BASKET)):
+            remove_product_from_basket(product_name, product_size)
+    print(f'Q before : {len(CUSTOMER_BASKET)}')
+    for i in range(spinbox_quantity):
+#        product_price = int(product_price)
+        CUSTOMER_BASKET.append(product_name)
+        CUSTOMER_BASKET_PRICE.append(find_product_price(product_name, product_size))
+        CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
+
+    treeview_print_to_screen()
+    basket_total_information()
+    destroy_child_window()
+    main_menu()
+
+
+def get_product_information_to_adjust_quantity():
+    for selected_item in customer_basket_treeview.selection():
+        item = customer_basket_treeview.item(selected_item)
+        get_product_info = item['values']
+        global isChildWindowOpen
+        # Create a top-level window (child windows)
+        if not isChildWindowOpen:
+            global child_window
+            child_window = tk.Toplevel()
+            child_window.title("Portions")
+            # Get screen width and height. Set width and height for child_window
+            screen_width = child_window.winfo_screenwidth()
+            screen_height = child_window.winfo_screenheight()
+            window_width = 200
+            window_height = 100
+            # Find center of the screen
+            center_x = int(screen_width / 2 - window_width / 2)
+            center_y = int(screen_height / 2 - window_height / 2)
+            child_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+
+            isChildWindowOpen = True
+            child_window.resizable(False, False)
+            get_quantity_from_spinbox = tk.IntVar()
+            quantity_label = tk.Label(child_window, text="Please choose a quantity")
+            quantity_label.pack()
+            quantity_spinbox = tk.Spinbox(child_window, from_= 1, to=50, textvariable=get_quantity_from_spinbox, wrap=True)
+            quantity_spinbox.pack()
+            set_quantity_button = tk.Button(child_window, text="Set Quantity", command=lambda: (set_quantity(get_quantity_from_spinbox.get(), get_product_info[0], get_product_info[1], get_product_info[3])))
+            set_quantity_button.pack()
+
+            child_window.protocol('WM_DELETE_WINDOW', lambda: on_close_child_window())
+            child_window.mainloop()
+
+
+def change_price(new_product_price, product_name, product_size):
+    index_of_product = find_index_of_product(product_name)
+
+    if new_product_price == CUSTOMER_BASKET_PRICE[index_of_product]:
+        showerror("Error", "New and old price can not be same!")
+    else:
+        for name_test, price_test in zip(CUSTOMER_BASKET, CUSTOMER_BASKET_PRICE):
+            if name_test in product_name:
+                CUSTOMER_BASKET.remove(name_test)
+                CUSTOMER_BASKET_PRICE.remove(CUSTOMER_BASKET_PRICE[index_of_product])
+                CUSTOMER_BASKET_PRODUCT_SIZE.remove(product_size)
+                CUSTOMER_BASKET.append(f"{product_name} CHANGED PRICE")
+                CUSTOMER_BASKET_PRICE.append(new_product_price)
+                CUSTOMER_BASKET_PRODUCT_SIZE.append(product_size)
+                break
+    basket_total_information()
+    destroy_child_window()
+    treeview_print_to_screen()
+
+
+def get_input_from_user_to_adjust_price():
+    global isChildWindowOpen
+    if not isChildWindowOpen:
+        for selected_item in customer_basket_treeview.selection():
+            item = customer_basket_treeview.item(selected_item)
+            print(item)
+            get_product_info = item['values']
+        global child_window
+        child_window = tk.Toplevel()
+        child_window.title("Portions")
+        # Get screen width and height. Set width and height for child_window
+        screen_width = child_window.winfo_screenwidth()
+        screen_height = child_window.winfo_screenheight()
+        window_width = 200
+        window_height = 100
+        # Find center of the screen
+        center_x = int(screen_width / 2 - window_width / 2)
+        center_y = int(screen_height / 2 - window_height / 2)
+        child_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+        isChildWindowOpen = True
+        child_window.resizable(False, False)
+        set_price_label = tk.Label(child_window, text="Please set new price")
+        set_price_label.pack()
+        price_var = tk.DoubleVar()
+        get_price_entry = tk.Entry(child_window, textvariable=price_var)
+        get_price_entry.pack()
+        get_price_button = tk.Button(child_window, text="Set new price", command=lambda: [change_price(price_var.get(), get_product_info[0], get_product_info[1])])
+        get_price_button.pack()
+        print(price_var.get())
+
+        child_window.protocol('WM_DELETE_WINDOW', lambda: on_close_child_window())
+        child_window.mainloop()
+
+
+def create_payment_screen():
+    payment_window = tk.Toplevel()
+    payment_window.title("Payment Screen")
+    payment_window.resizable(False, False)
+    # Get screen width and height. Set width and height for child_window
+    screen_width = payment_window.winfo_screenwidth()
+    screen_height = payment_window.winfo_screenheight()
+    window_width = 650
+    window_height = 470
+    # Find center of the screen
+    center_x = int(screen_width / 2 - window_width / 2)
+    center_y = int(screen_height / 2 - window_height / 2)
+    payment_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+    payment_image = tk.PhotoImage(file="images/other/payment_card_image.png")
+    payment_label = tk.Label(payment_window, image=payment_image)
+    payment_label.pack()
+    payment_check_input = tk.Button(payment_window, text="CHECK INFO", font=("Helvetica", 25))
+    payment_check_input.place(x=00, y=420, width=650, height=47)
+    card_16_digit_number_intvar = tk.IntVar()
+    card_16_digit_text_box = tk.Entry(payment_window, textvariable=card_16_digit_number_intvar, font=("Helvetica", 30))
+    card_16_digit_text_box.place(x=155, y=225, width=400, height=50)
+    card_cardholder_fname_lname_stringvar = tk.StringVar()
+    card_cardholder_fname_lname = tk.Entry(payment_window, textvariable=card_cardholder_fname_lname_stringvar, font=("Helvetica", 30))
+    card_cardholder_fname_lname.place(x=25, y=325, width=375, height=55)
+    card_validuntil_intvar = tk.IntVar()
+    card_validuntil_entry = tk.Entry(payment_window, textvariable=card_validuntil_intvar, font=("Helvetica", 30))
+    card_validuntil_entry.place(x=465, y=295, width=150, height=60)
+
+    payment_window.mainloop()
+
+
+def treeview_product_selected(event):
+    # x=840, y=40, height=650, width=825
+    remove_product_from_basket = tk.Button(button_section_frame, text="REMOVE ITEM", bg='red', fg='white', command=remove_product, font=("Helvetica,40"))
+    remove_product_from_basket.place(x=840, y=700, width=400, height=200)
+    global change_product_quantity
+    change_product_quantity = tk.Button(button_section_frame, text="CHANGE QUANTITY", bg='orange', fg='white', font=("Helvetica", 15), command=get_product_information_to_adjust_quantity)
+    change_product_quantity.place(x=1680, y=265, width=200, height=200)
+    global change_product_price
+    change_product_price = tk.Button(button_section_frame, text="CHANGE PRICE", bg='grey', fg='white', font=("Helvetica", 15), command=get_input_from_user_to_adjust_price)
+    change_product_price.place(x=1680, y=489, width=200, height=200)
+
+
 def clear_treeview_all():
     # Clear treeview_tuple and treeview_seen to reset treeview. So we won't append the same product multiple times to screen.
     treeview_tuple.clear()
@@ -258,19 +312,22 @@ def clear_treeview_all():
     # Clear childrens of treeview.
     for item in customer_basket_treeview.get_children():
         customer_basket_treeview.delete(item)
+
+
 def treeview_print_to_screen():
-#    print(f"Treeview : {CUSTOMER_BASKET}, {CUSTOMER_BASKET_PRICE}, {CUSTOMER_BASKET_PRODUCT_SIZE}")
+    #    print(f"Treeview : {CUSTOMER_BASKET}, {CUSTOMER_BASKET_PRICE}, {CUSTOMER_BASKET_PRODUCT_SIZE}")
     clear_treeview_all()
     # Create a tuple, count how many, add if a product in list multiple amount to seen list and append product information
     for product_name_treeview, loop_counter in zip(CUSTOMER_BASKET, range(0, len(CUSTOMER_BASKET))):
         if product_name_treeview not in treeview_seen:
-            get_product_price = find_product_price(product_name_treeview, CUSTOMER_BASKET_PRODUCT_SIZE[loop_counter])
             count = CUSTOMER_BASKET.count(product_name_treeview)
             treeview_tuple.append((CUSTOMER_BASKET[loop_counter], CUSTOMER_BASKET_PRODUCT_SIZE[loop_counter], count, f'{round(CUSTOMER_BASKET_PRICE[loop_counter]*count,2)}£'))
             treeview_seen.add(product_name_treeview)
 #    treeview_tuple.append(("Lamb Kebab", "S", 1,'4£')) # Test
     for add_to_treview in treeview_tuple:
         customer_basket_treeview.insert('', tk.END, values=add_to_treview)
+
+
 def treeview_create_customer_basket():
     # Define treeview identifiers
     treeview_customer_basket_identifier_columns = ('product_name', 'product_size', 'product_quantity', 'product_price')
@@ -290,38 +347,20 @@ def treeview_create_customer_basket():
     basket_total_information()
     customer_basket_treeview.bind('<<TreeviewSelect>>', treeview_product_selected)
 
+
 def on_close_child_window():
     global isChildWindowOpen
     isChildWindowOpen = False
     child_window.destroy()
+
+
 def destroy_child_window():
     child_window.destroy()
     global isChildWindowOpen
     isChildWindowOpen = False
     print("Child windows has been successfully destroyed")
 
-def clear_screen():
-    for widgets in main_pos_name.winfo_children():
-        widgets.destroy()
 
-
-def time_on_screen():
-    # Create a label frame for time
-    time_outside_frame = tk.LabelFrame(main_pos_name)
-    time_outside_frame.pack(fill="both")
-
-    # Create a label and call get_computer_time_date to update time and date everysecond
-    global time_label_top_left_corner
-    time_label_top_left_corner = tk.Label(time_outside_frame, font=('Helvatica', 15, 'bold'))
-    time_label_top_left_corner.pack(side=tk.TOP)
-
-    # UPDATE DATE AND TIME LABEL WITH COMPUTER TIME USING DATETIME
-    get_computer_time_date()
-def get_computer_time_date():
-
-    get_time = datetime.datetime.now()
-    time_label_top_left_corner.config(text=f"DATE: {get_time.day}/0{get_time.month}/{get_time.year} TIME: {get_time.hour}:{get_time.minute}:{get_time.second}")
-    time_label_top_left_corner.after(1000,get_computer_time_date)
 def print_items_in_food_menu():
     # width = 245px,  height=186px for future references
 
@@ -332,7 +371,7 @@ def print_items_in_food_menu():
     food_frame.pack(fill=tk.BOTH, expand=True)
 
     # Create a button and add food_kebab.png
-    food_kebab_image = tk.PhotoImage(file="images/food/food_kebab.png").subsample(x=4,y=4)
+    food_kebab_image = tk.PhotoImage(file="images/food/food_kebab.png").subsample(x=4, y=4)
     kebab_button = tk.Button(food_frame, image=food_kebab_image, command=lambda: get_portion("Lamb Kebab Wrap"))
     kebab_button.image = food_kebab_image
     kebab_button.place(x=40, y=5, width=200, height=200)
@@ -342,7 +381,7 @@ def print_items_in_food_menu():
     kebab_dish_information.place(x=65, y=210)
 
     # Create a button and add food_lahmacun.png
-    food_lahmacun_image = tk.PhotoImage(file="images/food/food_lahmacun.png").subsample(x=4,y=4)
+    food_lahmacun_image = tk.PhotoImage(file="images/food/food_lahmacun.png").subsample(x=4, y=4)
     lahmacun_button = tk.Button(food_frame, image=food_lahmacun_image, command=lambda: get_portion("Lahmacun"))
     lahmacun_button.image = food_lahmacun_image
     lahmacun_button.place(x=315, y=5, width=200, height=200)
@@ -352,8 +391,8 @@ def print_items_in_food_menu():
     lahmacun_dish_information.place(x=355, y=210)
 
     # Create a button and add food_cagkebab.png
-    cag_kebab_image = tk.PhotoImage(file="images/food/food_cagkebab.png").subsample(x=4,y=4)
-    cag_kebab_button = tk.Button(food_frame,image=cag_kebab_image, command=lambda: get_portion("Cag Kebab"))
+    cag_kebab_image = tk.PhotoImage(file="images/food/food_cagkebab.png").subsample(x=4, y=4)
+    cag_kebab_button = tk.Button(food_frame, image=cag_kebab_image, command=lambda: get_portion("Cag Kebab"))
     cag_kebab_button.image = cag_kebab_image
     cag_kebab_button.place(x=610, y=5, width=200, height=200)
 
@@ -362,7 +401,7 @@ def print_items_in_food_menu():
     cag_kebab_dish_information.place(x=640, y=210)
 
     # Create a button and add food_iskender.png
-    food_iskender_image = tk.PhotoImage(file="images/food/food_iskender.png").subsample(x=4,y=4)
+    food_iskender_image = tk.PhotoImage(file="images/food/food_iskender.png").subsample(x=4, y=4)
     iskender_button = tk.Button(food_frame, image=food_iskender_image, command=lambda: get_portion("Iskender"))
     iskender_button.image = food_iskender_image
     iskender_button.place(x=895, y=5, width=200, height=200)
@@ -372,7 +411,7 @@ def print_items_in_food_menu():
     iskender_dish_information.place(x=935, y=210)
 
     # Create a button and add food_ezogelin.png
-    food_ezogelin_image = tk.PhotoImage(file="images/food/food_ezogelin.png").subsample(x=4,y=4)
+    food_ezogelin_image = tk.PhotoImage(file="images/food/food_ezogelin.png").subsample(x=4, y=4)
     ezogelin_button = tk.Button(food_frame, image=food_ezogelin_image, command=lambda: get_portion("Ezogelin"))
     ezogelin_button.image = food_ezogelin_image
     ezogelin_button.place(x=40, y=300, width=200, height=200)
@@ -382,27 +421,27 @@ def print_items_in_food_menu():
     ezogelin_dish_information.place(x=80, y=505)
 
     # Create a button and add food_kisir.png
-    food_kisir_image = tk.PhotoImage(file="images/food/food_kisir.png").subsample(x=4,y=4)
+    food_kisir_image = tk.PhotoImage(file="images/food/food_kisir.png").subsample(x=4, y=4)
     kisir_button = tk.Button(food_frame, image=food_kisir_image, command=lambda: get_portion("Kisir"))
     kisir_button.image = food_kisir_image
-    kisir_button.place(x=315, y=300,width=200, height=200)
+    kisir_button.place(x=315, y=300, width=200, height=200)
 
     # Create label for dish feature(s) -> Name, price, V/VE/GF
     kisir_dish_information = tk.Label(food_frame, text=" Kisir \nPrice(S/L): 5.49£/6.85£ \nV/VE")
     kisir_dish_information.place(x=360, y=505)
 
     # Create a button and add food_mercimekkofte.png
-    food_mercimekkofte_image = tk.PhotoImage(file="images/food/food_mercimekkofte.png").subsample(x=4,y=4)
+    food_mercimekkofte_image = tk.PhotoImage(file="images/food/food_mercimekkofte.png").subsample(x=4, y=4)
     mercimekkofte_button = tk.Button(food_frame, image=food_mercimekkofte_image, command=lambda: get_portion("Mercimek Kofte"))
     mercimekkofte_button.image = food_mercimekkofte_image
-    mercimekkofte_button.place(x=610, y=300,width=200, height=200)
+    mercimekkofte_button.place(x=610, y=300, width=200, height=200)
 
     # Create label for dish feature(s) -> Name, price, V/VE/GF
     mercimekkofte_dish_information = tk.Label(food_frame, text=" Mercimek Kofte \nPrice(S/L): 8.45£/9.99£ \nV/VE")
     mercimekkofte_dish_information.place(x=640, y=505)
 
     # Create a button and add food_mercimekkofte.png
-    food_sarma_image = tk.PhotoImage(file="images/food/food_sarma.png").subsample(x=4,y=4)
+    food_sarma_image = tk.PhotoImage(file="images/food/food_sarma.png").subsample(x=4, y=4)
     sarma_button = tk.Button(food_frame, image=food_sarma_image, command=lambda: get_portion("Sarma"))
     sarma_button.image = food_sarma_image
     sarma_button.place(x=895, y=300, width=200, height=200)
@@ -411,10 +450,9 @@ def print_items_in_food_menu():
     sarma_dish_information = tk.Label(food_frame, text=" Sarma \nPrice(S/L): 9.45£/13.99£ \nV/VE")
     sarma_dish_information.place(x=935, y=505)
 
-
-
-
     go_back_to_main_menu()
+
+
 def print_items_in_drink_menu():
     clear_screen()
     time_on_screen()
@@ -427,17 +465,17 @@ def print_items_in_drink_menu():
     drink_button_cola_image_to_display = drink_button_cola_image.subsample(x=4, y=4)
     drink_button_cola = tk.Button(drink_frame, image=drink_button_cola_image_to_display, command=lambda: get_portion("Coca Cola"))
     drink_button_cola.image = drink_button_cola_image_to_display
-    drink_button_cola.place(x=40, y=5,width=200, height=200)
+    drink_button_cola.place(x=40, y=5, width=200, height=200)
     # Cola information
     drink_cola_information = tk.Label(drink_frame, text=" Coca Cola\n Price(S/L): 2.99£/3.99£")
-    drink_cola_information.place(x=75,y=210)
+    drink_cola_information.place(x=75, y=210)
 
     # Create a button and add image -> Soda
     drink_button_soda_image = tk.PhotoImage(file="images/drinks/drinks_soda.png")
     drink_button_soda_image_to_display = drink_button_soda_image.subsample(x=4, y=4)
     drink_button_soda = tk.Button(drink_frame, image=drink_button_soda_image_to_display, command=lambda: get_portion("Soda"))
     drink_button_soda.image = drink_button_soda_image_to_display
-    drink_button_soda.place(x=330, y=5,width=200, height=200)
+    drink_button_soda.place(x=330, y=5, width=200, height=200)
     # Soda information
     drink_soda_information = tk.Label(drink_frame, text=" Soda\n Price(S/L): 2.55£/3.67£")
     drink_soda_information.place(x=365, y=210)
@@ -446,7 +484,7 @@ def print_items_in_drink_menu():
     drink_button_applejuice_image_to_display = drink_button_applejuice_image.subsample(x=4, y=4)
     drink_button_applejuice = tk.Button(drink_frame, image=drink_button_applejuice_image_to_display, command=lambda: get_portion("Apple Juice"))
     drink_button_applejuice.image = drink_button_applejuice_image_to_display
-    drink_button_applejuice.place(x=620, y=5,width=200, height=200)
+    drink_button_applejuice.place(x=620, y=5, width=200, height=200)
     # Apple Juice information
     applejuice_drinks_information = tk.Label(drink_frame, text=" Apple Juice\n Price(S/L): 2.99£/3.99£")
     applejuice_drinks_information.place(x=655, y=210)
@@ -455,7 +493,7 @@ def print_items_in_drink_menu():
     drink_button_orangejuice_image_to_display = drink_button_orangejuice_image.subsample(x=4, y=4)
     drink_button_orangejuice = tk.Button(drink_frame, image=drink_button_orangejuice_image_to_display, command=lambda: get_portion("Orange Juice"))
     drink_button_orangejuice.image = drink_button_orangejuice_image_to_display
-    drink_button_orangejuice.place(x=910, y=5,width=200, height=200)
+    drink_button_orangejuice.place(x=910, y=5, width=200, height=200)
     # Orange Juice information
     orangejuice_drinks_information = tk.Label(drink_frame, text=" Orange Juice\n Price(S/L): 3.87£/7.80£")
     orangejuice_drinks_information.place(x=945, y=210)
@@ -464,7 +502,7 @@ def print_items_in_drink_menu():
     drink_button_tango_image_to_display = drink_button_tango_image.subsample(x=4, y=4)
     drink_button_tango = tk.Button(drink_frame, image=drink_button_tango_image_to_display, command=lambda: get_portion("Tango"))
     drink_button_tango.image = drink_button_tango_image_to_display
-    drink_button_tango.place(x=40, y=300,width=200, height=200)
+    drink_button_tango.place(x=40, y=300, width=200, height=200)
     # Tango information
     tango_drinks_information = tk.Label(drink_frame, text=" Tango\n Price(S/L): 1.99£/2.99£")
     tango_drinks_information.place(x=75, y=505)
@@ -473,7 +511,7 @@ def print_items_in_drink_menu():
     drink_button_ayran_image_to_display = drink_button_ayran_image.subsample(x=4, y=4)
     drink_button_ayran = tk.Button(drink_frame, image=drink_button_ayran_image_to_display, command=lambda: get_portion("Ayran"))
     drink_button_ayran.image = drink_button_ayran_image_to_display
-    drink_button_ayran.place(x=330, y=300,width=200, height=200)
+    drink_button_ayran.place(x=330, y=300, width=200, height=200)
     # Ayran information
     ayran_drinks_information = tk.Label(drink_frame, text=" Ayran\n Price(S/L): 0.99£/1.99£")
     ayran_drinks_information.place(x=365, y=505)
@@ -482,7 +520,7 @@ def print_items_in_drink_menu():
     drink_button_iced_tea_image_to_display = drink_button_iced_tea_image.subsample(x=4, y=4)
     drink_button_iced_tea = tk.Button(drink_frame, image=drink_button_iced_tea_image_to_display, command=lambda: get_portion("Iced Tea"))
     drink_button_iced_tea.image = drink_button_iced_tea_image_to_display
-    drink_button_iced_tea.place(x=620, y=300,width=200, height=200)
+    drink_button_iced_tea.place(x=620, y=300, width=200, height=200)
     # Ice Tea information
     iced_tea_drinks_information = tk.Label(drink_frame, text=" Ice Tea\n Price(S/L): 3.99£/5.99£")
     iced_tea_drinks_information.place(x=665, y=505)
@@ -491,13 +529,14 @@ def print_items_in_drink_menu():
     drink_button_root_beer_image_to_display = drink_button_root_beer_image.subsample(x=4, y=4)
     drink_button_root_beer = tk.Button(drink_frame, image=drink_button_root_beer_image_to_display, command=lambda: get_portion("Root Beer"))
     drink_button_root_beer.image = drink_button_root_beer_image_to_display
-    drink_button_root_beer.place(x=910, y=300,width=200, height=200)
+    drink_button_root_beer.place(x=910, y=300, width=200, height=200)
     # Root Beer information
     root_beer_drinks_information = tk.Label(drink_frame, text=" Root Beer\n Price(S/L): 3.99£/5.99£")
     root_beer_drinks_information.place(x=955, y=505)
 
-
     go_back_to_main_menu()
+
+
 def print_items_in_cocktail_menu():
     # width = 245px,  height=186px for future references
 
@@ -508,7 +547,7 @@ def print_items_in_cocktail_menu():
     cocktail_frame.pack(fill=tk.BOTH, expand=True)
 
     # Create a button and add cocktail_cosmopolitan.png
-    cosmopolitan_image = tk.PhotoImage(file="images/cocktails/cocktail_cosmopolitan.png").subsample(x=4,y=4)
+    cosmopolitan_image = tk.PhotoImage(file="images/cocktails/cocktail_cosmopolitan.png").subsample(x=4, y=4)
     cosmopolitan_button = tk.Button(cocktail_frame, image=cosmopolitan_image, command=lambda: get_portion("Cosmopolitan"))
     cosmopolitan_button.image = cosmopolitan_image
     cosmopolitan_button.place(x=40, y=5, width=200, height=200)
@@ -518,7 +557,7 @@ def print_items_in_cocktail_menu():
     cosmopolitan_information.place(x=75, y=210)
 
     # Create a button and add cocktail_margarita.png
-    margarita_image = tk.PhotoImage(file="images/cocktails/cocktail_margarita.png").subsample(x=4,y=4)
+    margarita_image = tk.PhotoImage(file="images/cocktails/cocktail_margarita.png").subsample(x=4, y=4)
     margarita_button = tk.Button(cocktail_frame, image=margarita_image, command=lambda: get_portion("Margarita"))
     margarita_button.image = margarita_image
     margarita_button.place(x=315, y=5, width=200, height=200)
@@ -528,7 +567,7 @@ def print_items_in_cocktail_menu():
     margarita_information.place(x=375, y=210)
 
     # Create a button and add cocktail_martini.png
-    martini_image = tk.PhotoImage(file="images/cocktails/cocktail_martini.png").subsample(x=4,y=4)
+    martini_image = tk.PhotoImage(file="images/cocktails/cocktail_martini.png").subsample(x=4, y=4)
     martini_button = tk.Button(cocktail_frame, image=martini_image, command=lambda: get_portion("Martini"))
     martini_button.image = martini_image
     martini_button.place(x=610, y=5, width=200, height=200)
@@ -538,7 +577,7 @@ def print_items_in_cocktail_menu():
     martini_information.place(x=670, y=210)
 
     # Create a button and add cocktail_mojito.png
-    mojito_image = tk.PhotoImage(file="images/cocktails/cocktail_mojito.png").subsample(x=4,y=4)
+    mojito_image = tk.PhotoImage(file="images/cocktails/cocktail_mojito.png").subsample(x=4, y=4)
     mojito_button = tk.Button(cocktail_frame, image=mojito_image, command=lambda: get_portion("Mojito"))
     mojito_button.image = mojito_image
     mojito_button.place(x=895, y=5, width=200, height=200)
@@ -548,7 +587,7 @@ def print_items_in_cocktail_menu():
     mojito_information.place(x=960, y=210)
 
     # Create a button and add cocktail_moscowmule.png
-    moscowmule_image = tk.PhotoImage(file="images/cocktails/cocktail_moscowmule.png").subsample(x=4,y=4)
+    moscowmule_image = tk.PhotoImage(file="images/cocktails/cocktail_moscowmule.png").subsample(x=4, y=4)
     moscowmule_button = tk.Button(cocktail_frame, image=moscowmule_image, command=lambda: get_portion("Moscow Mule"))
     moscowmule_button.image = moscowmule_image
     moscowmule_button.place(x=40, y=300, width=200, height=200)
@@ -558,7 +597,7 @@ def print_items_in_cocktail_menu():
     moscowmule_information.place(x=80, y=505)
 
     # Create a button and add cocktail_negroni.png
-    negroni_image = tk.PhotoImage(file="images/cocktails/cocktail_negroni.png").subsample(x=4,y=4)
+    negroni_image = tk.PhotoImage(file="images/cocktails/cocktail_negroni.png").subsample(x=4, y=4)
     negroni_button = tk.Button(cocktail_frame, image=negroni_image, command=lambda: get_portion("Negroni"))
     negroni_button.image = negroni_image
     negroni_button.place(x=315, y=300, width=200, height=200)
@@ -568,7 +607,7 @@ def print_items_in_cocktail_menu():
     negroni_information.place(x=370, y=505)
 
     # Create a button and add cocktail_oldfashioned.png
-    oldfashioned_image = tk.PhotoImage(file="images/cocktails/cocktail_oldfashioned.png").subsample(x=4,y=4)
+    oldfashioned_image = tk.PhotoImage(file="images/cocktails/cocktail_oldfashioned.png").subsample(x=4, y=4)
     oldfashioned_button = tk.Button(cocktail_frame, image=oldfashioned_image, command=lambda: get_portion("Old Fashioned"))
     oldfashioned_button.image = oldfashioned_image
     oldfashioned_button.place(x=610, y=300, width=200, height=200)
@@ -578,7 +617,7 @@ def print_items_in_cocktail_menu():
     oldfashioned_information.place(x=655, y=505)
 
     # Create a button and add cocktail_whiskeysour.png
-    whiskeysour_image = tk.PhotoImage(file="images/cocktails/cocktail_whiskeysour.png").subsample(x=4,y=4)
+    whiskeysour_image = tk.PhotoImage(file="images/cocktails/cocktail_whiskeysour.png").subsample(x=4, y=4)
     whiskeysour_button = tk.Button(cocktail_frame, image=whiskeysour_image, command=lambda: get_portion("Whiskey Sour"))
     whiskeysour_button.image = whiskeysour_image
     whiskeysour_button.place(x=895, y=300, width=200, height=200)
@@ -588,6 +627,8 @@ def print_items_in_cocktail_menu():
     whiskeysour_information.place(x=945, y=505)
 
     go_back_to_main_menu()
+
+
 def print_items_in_mocktail_menu():
     # width = 245px,  height=186px for future references
 
@@ -678,6 +719,8 @@ def print_items_in_mocktail_menu():
     mojito_information.place(x=960, y=505)
 
     go_back_to_main_menu()
+
+
 def print_items_in_kids_menu():
     # width = 245px,  height=186px for future references
 
@@ -709,7 +752,7 @@ def print_items_in_kids_menu():
 
     # Create a button and add kids_potatoes.png
     kids_potatoes_image = tk.PhotoImage(file="images/kids_menu/kids_potatoes.png").subsample(x=4, y=4)
-    potatoes_button = tk.Button(kids_menu_frame, image=kids_potatoes_image , command=lambda: get_portion("Air-fryer Jacket Potatoes"))
+    potatoes_button = tk.Button(kids_menu_frame, image=kids_potatoes_image, command=lambda: get_portion("Air-fryer Jacket Potatoes"))
     potatoes_button.image = kids_potatoes_image
     potatoes_button.place(x=610, y=5, width=200, height=200)
 
@@ -768,6 +811,8 @@ def print_items_in_kids_menu():
     beefstew_label.place(x=900, y=505)
 
     go_back_to_main_menu()
+
+
 def print_items_in_coffee_menu():
     # width = 245px,  height=186px for future references
 
@@ -857,6 +902,8 @@ def print_items_in_coffee_menu():
     americano_label = tk.Label(coffee_menu_frame, text="Cappucino\nPrice: 2.99£")
     americano_label.place(x=960, y=505)
     go_back_to_main_menu()
+
+
 def main_menu():
     clear_screen()
     time_on_screen()
@@ -865,7 +912,7 @@ def main_menu():
     button_section_frame = tk.Frame(main_pos_name)
     button_section_frame.pack(fill="both", expand=True)
     # FOOD BUTTON
-    food_button_image = tk.PhotoImage(file="images/other/food_button.png").subsample(x=4,y=4)
+    food_button_image = tk.PhotoImage(file="images/other/food_button.png").subsample(x=4, y=4)
     food_button = tk.Button(button_section_frame, image=food_button_image, command=print_items_in_food_menu)
     food_button.image = food_button_image
     food_button.place(x=50, y=50, width=200, height=200)
@@ -884,7 +931,7 @@ def main_menu():
 
     # KIDS BUTTON
     kids_menu_button_image = tk.PhotoImage(file="images/other/kidsmenu_button.png").subsample(x=2, y=2)
-    kids_menu_button = tk.Button(button_section_frame, image=kids_menu_button_image, command = print_items_in_kids_menu)
+    kids_menu_button = tk.Button(button_section_frame, image=kids_menu_button_image, command=print_items_in_kids_menu)
     kids_menu_button.image = kids_menu_button_image
     kids_menu_button.place(x=50, y=300, width=200, height=200)
 
@@ -905,54 +952,48 @@ def main_menu():
     discount_button.place(x=1680, y=40, width=200, height=200)
     # Payment Button
     payment_button = tk.Button(button_section_frame, text="PAYMENT", bg='green', fg='white', font=("Helvetica", 15), command=create_payment_screen)
-    payment_button.place(x=1680, y=699, width=200,height=201)
+    payment_button.place(x=1680, y=699, width=200, height=201)
 
 #  update_button = tk.Button(button_section_frame, text="UPDATE", command=treeview_print_to_screen).pack()
     treeview_create_customer_basket()
 
-def create_payment_screen():
-    payment_window = tk.Toplevel()
-    payment_window.title("Payment Screen")
-    payment_window.resizable(False, False)
-    # Get screen width and height. Set width and height for child_window
-    screen_width = payment_window.winfo_screenwidth()
-    screen_height = payment_window.winfo_screenheight()
-    window_width = 650
-    window_height = 470
-    # Find center of the screen
-    center_x = int(screen_width / 2 - window_width / 2)
-    center_y = int(screen_height / 2 - window_height / 2)
-    payment_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-    payment_image = tk.PhotoImage(file= "images/other/payment_card_image.png")
-    payment_label = tk.Label(payment_window, image=payment_image).pack()
-    payment_check_input = tk.Button(payment_window, text="CHECK INFO", font=("Helvetica",25))
-    payment_check_input.place(x=00, y=420, width=650, height=47)
-    card_16_digit_number_intvar = tk.IntVar()
-    card_16_digit_text_box = tk.Entry(payment_window, textvariable=card_16_digit_number_intvar, font=("Helvetica",30))
-    card_16_digit_text_box.place(x=155, y=225, width=400, height=50)
-    card_cardholder_fname_lname_stringvar = tk.StringVar()
-    card_cardholder_fname_lname = tk.Entry(payment_window, textvariable=card_cardholder_fname_lname_stringvar, font=("Helvetica",30))
-    card_cardholder_fname_lname.place(x=25, y=325, width=375, height=55)
-    card_validuntil_intvar = tk.IntVar()
-    card_validuntil_entry = tk.Entry(payment_window, textvariable=card_validuntil_intvar, font=("Helvetica", 30))
-    card_validuntil_entry.place(x=465, y=295, width=150, height=60)
 
-    payment_window.mainloop()
+def clear_screen():
+    for widgets in main_pos_name.winfo_children():
+        widgets.destroy()
+
+
+def get_computer_time_date():
+
+    get_time = datetime.datetime.now()
+    time_label_top_left_corner.config(text=f"DATE: {get_time.day}/0{get_time.month}/{get_time.year} TIME: {get_time.hour}:{get_time.minute}:{get_time.second}")
+    time_label_top_left_corner.after(1000, get_computer_time_date)
+
+
+def time_on_screen():
+    # Create a label frame for time
+    time_outside_frame = tk.LabelFrame(main_pos_name)
+    time_outside_frame.pack(fill="both")
+
+    # Create a label and call get_computer_time_date to update time and date everysecond
+    global time_label_top_left_corner
+    time_label_top_left_corner = tk.Label(time_outside_frame, font=('Helvatica', 15, 'bold'))
+    time_label_top_left_corner.pack(side=tk.TOP)
+
+    # UPDATE DATE AND TIME LABEL WITH COMPUTER TIME USING DATETIME
+    get_computer_time_date()
+
+
 def go_back_to_main_menu():
     back_to_menu_button_image = tk.PhotoImage(file="images/other/back_to_main_menu.png")
-    back_to_menu_button_image_to_display = back_to_menu_button_image.subsample(x=4,y=4)
-    another_test_button = tk.Button(main_pos_name, text="BACK TO MENU", command=main_menu, image=back_to_menu_button_image_to_display)
-    another_test_button.image = back_to_menu_button_image_to_display
-    another_test_button.place(x=1715, y=800, width=200, height=200)
-# Set main settings, name and title
-def calculate_basket_subtotal():
-    calculate_subtotal = 0
-    for i in range(len(CUSTOMER_BASKET_PRICE)):
-        calculate_subtotal += CUSTOMER_BASKET_PRICE[i]
-    return round(calculate_subtotal,2)
+    back_to_menu_button_image_to_display = back_to_menu_button_image.subsample(x=4, y=4)
+    back_to_menu = tk.Button(main_pos_name, text="BACK TO MENU", command=main_menu, image=back_to_menu_button_image_to_display)
+    back_to_menu.image = back_to_menu_button_image_to_display
+    back_to_menu.place(x=1715, y=800, width=200, height=200)
+
 
 def create_discount_window():
-    global  discount_child_window
+    global discount_child_window
     discount_child_window = tk.Toplevel()
     # Get screen width and height. Set width and height for child_window
     screen_width = discount_child_window.winfo_screenwidth()
@@ -963,37 +1004,53 @@ def create_discount_window():
     center_x = int(screen_width / 2 - window_width / 2)
     center_y = int(screen_height / 2 - window_height / 2)
     discount_child_window.geometry(f'{200}x{200}+{center_x}+{center_y}')
-    discount_child_window.resizable(False,False)
+    discount_child_window.resizable(False, False)
     discount_child_window.title("Discount Window")
-    ten_percent_discount_button = tk.Button(discount_child_window, text="%10", bg="black", fg="white", font=("Arial", 10), command=lambda:discount_percentage(10))
-    ten_percent_discount_button.place(width=100, height=100,x=0,y=0)
-    thirty_percent_discount_button = tk.Button(discount_child_window, text="%30", bg="green", fg="white", font=("Arial", 10), command=lambda:discount_percentage(30))
-    thirty_percent_discount_button.place(width=100, height=100,x=100,y=0)
-    fifty_percent_discount_button = tk.Button(discount_child_window, text="%50", bg="red", fg="white", font=("Arial", 10), command=lambda:discount_percentage(50))
-    fifty_percent_discount_button.place(width=100, height=100,x=0,y=100)
-    set_discount_amount_button = tk.Button(discount_child_window, text="%100", bg="blue", fg="white", font=("Arial", 8), command=lambda:discount_percentage(100))
-    set_discount_amount_button.place(width=100, height=100, x=100,y=100)
+    ten_percent_discount_button = tk.Button(discount_child_window, text="%10", bg="black", fg="white", font=("Arial", 10), command=lambda: discount_percentage(10))
+    ten_percent_discount_button.place(width=100, height=100, x=0, y=0)
+    thirty_percent_discount_button = tk.Button(discount_child_window, text="%30", bg="green", fg="white", font=("Arial", 10), command=lambda: discount_percentage(30))
+    thirty_percent_discount_button.place(width=100, height=100, x=100, y=0)
+    fifty_percent_discount_button = tk.Button(discount_child_window, text="%50", bg="red", fg="white", font=("Arial", 10), command=lambda: discount_percentage(50))
+    fifty_percent_discount_button.place(width=100, height=100, x=0, y=100)
+    set_discount_amount_button = tk.Button(discount_child_window, text="%100", bg="blue", fg="white", font=("Arial", 8), command=lambda: discount_percentage(100))
+    set_discount_amount_button.place(width=100, height=100, x=100, y=100)
     discount_child_window.mainloop()
+
+
 is_discount_button_pressed = False
-def isPressed():
+discount_percentage_variable = 0
+
+
+def discount_percentage(percentage):
+    global discount_percentage_variable
+    discount_percentage_variable = percentage
+    is_pressed()
+
+
+def is_pressed():
     global is_discount_button_pressed
     if not is_discount_button_pressed:
         is_discount_button_pressed = not is_discount_button_pressed
         basket_total_information()
-def calculate_basket_total():
-    first_price_calculation = round(calculate_basket_subtotal() - (calculate_basket_subtotal()*discount_percentage_variable)/100,2)
-    second_price_calculation = (first_price_calculation*18)/100 + first_price_calculation
-    return round(second_price_calculation,2)
 
-discount_percentage_variable = 0
-def discount_percentage(percentage):
-    global discount_percentage_variable
-    discount_percentage_variable = percentage
-    isPressed()
+
+def calculate_basket_subtotal():
+    calculate_subtotal = 0
+    for i in range(len(CUSTOMER_BASKET_PRICE)):
+        calculate_subtotal += CUSTOMER_BASKET_PRICE[i]
+    return round(calculate_subtotal, 2)
+
+
+def calculate_basket_total():
+    first_price_calculation = round(calculate_basket_subtotal() - (calculate_basket_subtotal()*discount_percentage_variable)/100, 2)
+    second_price_calculation = (first_price_calculation*18)/100 + first_price_calculation
+    return round(second_price_calculation, 2)
+
+
 def basket_total_information():
-#    voucher = False
+    #    voucher = False
     labelframe = tk.LabelFrame(main_pos_name)
-    labelframe.place(x=1266, y=733,width=400 , height=202)
+    labelframe.place(x=1266, y=733, width=400, height=202)
     subtotal_label = tk.Label(labelframe, text=f"Subtotal: {calculate_basket_subtotal()}£", font=("Helvetica", 20))
     subtotal_label.pack()
     if is_discount_button_pressed:
@@ -1008,14 +1065,13 @@ def basket_total_information():
     total.pack()
 
 
-
-
 def check_computer_res():
-    print(f'{get_screen_res_width}, {get_screen_res_height}')
     if get_screen_res_width != 1920 or get_screen_res_width < 1920:
         if get_screen_res_height < 1080:
             showerror("ERROR", "Please set your resolution to 1920x1080 higher in order to run this program PROPERLY.")
             main_pos_name.destroy()
+
+
 main_pos_name = tk.Tk()
 
 
@@ -1029,11 +1085,6 @@ set_window_size_height = 0
 check_computer_res()
 main_pos_name.geometry(f"{get_screen_res_width}x{get_screen_res_height-72}+{set_window_size_width}+{set_window_size_height}")
 main_menu()
-
-
-
-#test_button = tk.Button(main_pos_name, text="Test Button", command=customer_basket_treeview)
-#test_button.place(x=600,y=800)
-
-
+# test_button = tk.Button(main_pos_name, text="Test Button", command=customer_basket_treeview)
+# test_button.place(x=600,y=800)
 main_pos_name.mainloop()
