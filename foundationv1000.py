@@ -20,6 +20,7 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [BUG/FIXED] Change quantity adds X times of that product instead of changing it to user input.
 # [BUG/FIXED] You can't change product price if its already changed.
 # [BUG/FIXED] Now you can't apply multiple discounts. Only one per Software run.
+# [BUG/FIXED] Function checks the following statements; is card_number all digit?, is valid_date all digit? does card_holder contains any digit? Check card_number and card_valid length.
 # [DONE] ADD FOOD NAME TO RADIOBUTTON CHILD WINDOW -> Please choose a food portion: {FOOD NAME}
 # [DONE] Using food's name, match the name with PRODUCT_LIST-> get index of the food and use that index to get food's portion prices.
 # [DONE] Now it calculates the price based on quantity.
@@ -30,7 +31,7 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [DONE] Add Discount button to validate coupon and apply discount.
 # [DONE] Save the percentage to a variable and use that variable to calculate discounted price.
 # [DONE] All discount percentages has been added.
-# [WIP] Add payment page button(only by card)
+# [DONE] Add payment page button(only by card) and functionality to payment page.
 
 
 """ [BUG/FIXED] Change price updates price labels but not treeview <- problem occurs because treeview get price information directly from PRICE_LIST TUPLE via find_product_price() function. 
@@ -312,7 +313,7 @@ def remove_everything_on_basket():
 digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 def validate_card_info(card_digit, card_holder, card_valid):
     if calculate_basket_total() == 0:
-        showwarning("Error", f"Basket total must be greater than 0.\nCurrent basket total is: {round(calculate_basket_total()),1}")
+        showwarning("Error", f"Basket total must be greater than 0.\nCurrent basket total is: {round(calculate_basket_total(),2)}")
         return
     if card_digit.isdigit() and len(card_digit) == 16 and card_valid.isdigit() and len(card_valid) == 4:
         if card_holder not in digits:
