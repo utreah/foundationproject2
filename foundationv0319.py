@@ -23,9 +23,9 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [DONE] Add adjust quantity(increment) on click treeview item. -> Get amount of quantity from user and use chosen item's name and size to find the product. Multiply that product with a loop and append it customer basket
 # [DONE] Add Discount button to validate coupon and apply discount.
 # [DONE] Save the percentage to a variable and use that variable to calculate discounted price.
-# [WIP] Set discount percentage not implemented yet.
+# [DONE] All discount percentages has been added.
 # [WIP] Add payment page button(only by card)
-# [WIP] 
+
 """ [BUG] Change price updates price labels but not treeview <- problem occurs because treeview get price information directly from PRICE_LIST TUPLE via find_product_price() function. 
 Solution 1: Get treeview price from CUSTOMER_BASKET_PRICE or ask customer to how many price changes they'd like to do. Based on user input remove 'userinput' amount from both treeview 
 and CUSTOMER_BASKET, CUSTOMER_BASKET_SIZE, CUSTOMER_BASKET_PRICE then add it back with new price + {name_of_the_product} + 'Price changed' """
@@ -185,7 +185,7 @@ def treeview_product_selected(event):
     remove_product_from_basket = tk.Button(button_section_frame, text="REMOVE ITEM", bg='red', fg='white', command=lambda: [remove_product(), remove_product_from_basket.destroy()], font=("Helvetica,40"))
     remove_product_from_basket.place(x=840, y=700, width=400, height=200)
     global change_product_quantity
-    change_product_quantity = tk.Button(button_section_frame, text="CHANGE QUANTITY", bg='green', fg='white', font=("Helvetica", 15), command=get_product_information_to_adjust_quantity)
+    change_product_quantity = tk.Button(button_section_frame, text="CHANGE QUANTITY", bg='blue', fg='white', font=("Helvetica", 15), command=get_product_information_to_adjust_quantity)
     change_product_quantity.place(x=1680, y=265,width=200,height=200)
     global change_product_price
     change_product_price = tk.Button(button_section_frame, text="CHANGE PRICE", bg='grey', fg='white', font=("Helvetica", 15), command=get_input_from_user_to_adjust_price)
@@ -881,9 +881,29 @@ def main_menu():
     # Discount Button
     discount_button = tk.Button(button_section_frame, text="Discount", bg='blue', fg='white', font=("Arial", 20), command=create_discount_window)
     discount_button.place(x=1680, y=40, width=200, height=200)
+    # Payment Button
+    payment_button = tk.Button(button_section_frame, text="PAYMENT", bg='green', fg='white', font=("Helvetica", 15), command=create_payment_screen)
+    payment_button.place(x=1680, y=699, width=200,height=201)
 
 #  update_button = tk.Button(button_section_frame, text="UPDATE", command=treeview_print_to_screen).pack()
     treeview_create_customer_basket()
+
+def create_payment_screen():
+    payment_window = tk.Toplevel()
+    payment_window.title("Payment Screen")
+    payment_window.resizable(False, False)
+    # Get screen width and height. Set width and height for child_window
+    screen_width = payment_window.winfo_screenwidth()
+    screen_height = payment_window.winfo_screenheight()
+    window_width = 400
+    window_height = 180
+    # Find center of the screen
+    center_x = int(screen_width / 2 - window_width / 2)
+    center_y = int(screen_height / 2 - window_height / 2)
+    payment_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+
+
+    payment_window.mainloop()
 def go_back_to_main_menu():
     back_to_menu_button_image = tk.PhotoImage(file="images/other/back_to_main_menu.png")
     back_to_menu_button_image_to_display = back_to_menu_button_image.subsample(x=4,y=4)
@@ -917,7 +937,7 @@ def create_discount_window():
     thirty_percent_discount_button.place(width=100, height=100,x=100,y=0)
     fifty_percent_discount_button = tk.Button(discount_child_window, text="%50", bg="red", fg="white", font=("Arial", 10), command=lambda:discount_percentage(50))
     fifty_percent_discount_button.place(width=100, height=100,x=0,y=100)
-    set_discount_amount_button = tk.Button(discount_child_window, text="SET PERCENTAGE", bg="blue", fg="white", font=("Arial", 8)) # will be added text box to get values
+    set_discount_amount_button = tk.Button(discount_child_window, text="%100", bg="blue", fg="white", font=("Arial", 8), command=lambda:discount_percentage(100))
     set_discount_amount_button.place(width=100, height=100, x=100,y=100)
     discount_child_window.mainloop()
 is_discount_button_pressed = False
