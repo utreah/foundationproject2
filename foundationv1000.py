@@ -32,6 +32,7 @@ from tkinter.messagebox import showerror, showwarning, showinfo
 # [DONE] Save the percentage to a variable and use that variable to calculate discounted price.
 # [DONE] All discount percentages has been added.
 # [DONE] Add payment page button(only by card) and functionality to payment page.
+# [BUG] Yemek(L) + kahve ekledikten sonra quantity değişmiyor.
 
 
 """ [BUG/FIXED] Change price updates price labels but not treeview <- problem occurs because treeview get price information directly from PRICE_LIST TUPLE via find_product_price() function. 
@@ -145,7 +146,6 @@ def remove_product_from_basket(product_name, product_size):
     for i in range(len(CUSTOMER_BASKET)):
         if product_name.lower() == CUSTOMER_BASKET[i].lower():
             get_index_of_product = i
-    print(CUSTOMER_BASKET[get_index_of_product])
     CUSTOMER_BASKET.remove(CUSTOMER_BASKET[get_index_of_product])
     if product_size == 'S':
         CUSTOMER_BASKET_PRODUCT_SIZE.remove('S')
@@ -161,7 +161,6 @@ def set_quantity(spinbox_quantity, product_name, product_size, product_price):
     if len(CUSTOMER_BASKET) >= 1:
         for _ in range(len(CUSTOMER_BASKET)):
             remove_product_from_basket(product_name, product_size)
-    print(f'Q before : {len(CUSTOMER_BASKET)}')
     for i in range(spinbox_quantity):
 #        product_price = int(product_price)
         CUSTOMER_BASKET.append(product_name)
@@ -199,7 +198,7 @@ def get_product_information_to_adjust_quantity():
             get_quantity_from_spinbox = tk.IntVar()
             quantity_label = tk.Label(child_window, text="Please choose a quantity")
             quantity_label.pack()
-            quantity_spinbox = tk.Spinbox(child_window, from_= 1, to=50, textvariable=get_quantity_from_spinbox, wrap=True)
+            quantity_spinbox = tk.Spinbox(child_window, from_=1, to=50, textvariable=get_quantity_from_spinbox, wrap=True)
             quantity_spinbox.pack()
             set_quantity_button = tk.Button(child_window, text="Set Quantity", command=lambda: (set_quantity(get_quantity_from_spinbox.get(), get_product_info[0], get_product_info[1], get_product_info[3])))
             set_quantity_button.pack()
