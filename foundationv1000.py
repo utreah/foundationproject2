@@ -55,7 +55,6 @@ CUSTOMER_BASKET_PRODUCT_SIZE = []
 isChildWindowOpen = False
 treeview_tuple = []
 treeview_seen = set()
-test_tuple = []
 
 
 def get_portion(product_name):
